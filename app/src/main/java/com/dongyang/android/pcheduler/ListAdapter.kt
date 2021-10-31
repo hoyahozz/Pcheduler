@@ -2,7 +2,6 @@ package com.dongyang.android.pcheduler
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.database.TaskEntity
@@ -11,13 +10,13 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-10-30
- * @Description :
+ * @Description : 메인 액티비티 리사이클러뷰의 어댑터
  */
 
-class MainAdapter(
+class ListAdapter(
     val context: Context,
     var list: List<TaskEntity>
-) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+) : RecyclerView.Adapter<ListAdapter.MainViewHolder>() {
 
 
     override fun getItemCount(): Int {

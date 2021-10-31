@@ -9,12 +9,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.database.CategoryEntity
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.lang.IllegalArgumentException
 
 @SuppressLint("StaticFieldLeak")
 class MainActivity : AppCompatActivity() {
@@ -37,131 +41,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         db = ListDatabase.getInstance(this)!! // NOT NULL
 
-        binding.list.layoutManager = LinearLayoutManager(this)
-        binding.list.addItemDecoration(recyclerViewDecoration(20))
-
-        getTask()
-
-        binding.btnAdd.setOnClickListener{
-            var text = binding.listText.text.toString() // 할 일 내용
-
-            var task = TaskEntity(null,1,text,"","",null,20211101,"")
-            insertTask(task)
-
-            binding.listText.setText("")
-        }
-
-
-
+        initNavigationBar()
     }
 
-    fun setDefaultCategory() {
-        val DEFAULT_CATEGORY = CategoryEntity(1,"DEFAULT")
-        insertCategory(DEFAULT_CATEGORY)
-    }
-
-    // RecyclerView 설정
-    fun setRecyclerView(taskList : List<TaskEntity>) {
-        binding.list.adapter = MainAdapter(this, taskList)
-    }
-
-
-    // TODO : AsyncTask -> Coroutine 변환 (10/24 김정호)
-
-    /**
-     * 안드로이드에서는 Lint를 통해 성능상 문제가 있을 수 있는 코드를 관리한다.
-     * 밑의 코드에서는 AsyncTask 때문에 메모리 누수가 일어날 수 있는데, SuppressLint 를 통해 경고를 무시할 수 있다.
-     */
-
-    fun insertCategory(category : CategoryEntity) {
-
-        /**
-         * UI와 관련된 일들은 모두 MainThread 에서 실행한다.
-         * 데이터 통신과 관련된 일은 WorkerThread(Background Thread) 에서 실행한다.
-         */
-
-        val getInsertCategory = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                db.listDAO().insertCategory(category)
+    private fun initNavigationBar() {
+        binding.mainBnv.run {
+            setOnItemSelectedListener { item ->
+                when(item.itemId) {
+                    R.id.menu_list ->
+                        changeFragment(ListFragment())
+                    R.id.menu_cal ->
+                        changeFragment(CalFragment())
+                }
+                true
             }
-
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-                getCategory() // 데이터를 넣은 후 새로고침
-            }
-
-        }
-        getInsertCategory.execute()
-    }
-
-    fun getCategory() {
-        val getCategory = object : AsyncTask<Unit,Unit,Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                categoryList = db.listDAO().getCategory()
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                super.onPostExecute(result)
-            }
-        }
-
-        getCategory.execute()
-    }
-
-    fun deleteCategory() {
-
-    }
-
-    fun insertTask(task : TaskEntity) {
-
-        val getInsertTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                db.listDAO().insertTask(task)
-            }
-
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-                getTask() // 데이터를 넣은 후 새로고침
-            }
-
-        }
-        getInsertTask.execute()
-
-    }
-
-    fun getTask() {
-        val getTask = object : AsyncTask<Unit,Unit,Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                taskList = db.listDAO().getTask()
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                super.onPostExecute(result)
-                setRecyclerView(taskList)
-            }
-        }
-
-        getTask.execute()
-    }
-
-
-    // 리사이클러뷰 간격 조정
-    inner class recyclerViewDecoration(private val height : Int) : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(
-            outRect: Rect,
-            view: View,
-            parent: RecyclerView,
-            state: RecyclerView.State
-        ) {
-            outRect.bottom = height
+            selectedItemId = R.id.menu_list
         }
     }
+
+    private fun changeFragment(targetFragment : Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frame, targetFragment)
+            .commitAllowingStateLoss()
+    }
+
 
 
 
