@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
         db = ListDatabase.getInstance(this)!! // NOT NULL
 
         initNavigationBar()
@@ -64,9 +65,4 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.main_frame, targetFragment)
             .commitAllowingStateLoss()
     }
-
-
-
-
-
 }

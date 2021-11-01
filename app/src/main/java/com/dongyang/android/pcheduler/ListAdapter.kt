@@ -40,8 +40,8 @@ class ListAdapter(
 
 
     inner class MainViewHolder(private val binding : ItemListBinding) : RecyclerView.ViewHolder(binding.root) {
-        var taskText = binding.listEdt
-        var taskImage = binding.listImg
+        var taskText = binding.itemList
+        var taskImage = binding.itemListImg
     }
 
 }

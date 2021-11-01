@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.database.CategoryEntity
@@ -27,8 +28,12 @@ class ListFragment : Fragment() {
     var categoryList = listOf<CategoryEntity>()
     var taskList = listOf<TaskEntity>()
     lateinit var db : ListDatabase // 데이터베이스
-    private var _binding : FragmentListBinding? = null// 뷰 바인딩
-    private val binding get() = _binding!!
+    private var _binding : FragmentListBinding? = null // 뷰 바인딩
+    // _를 붙이는 이유 : private 한 변수는 관례상 prefix 를 붙이는 경우가 많다.
+    private val binding get()  = _binding!!
+    // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
+
+
     /*
          lateinit -> 전역변수 선언 후 null 값을 지정하지 않고 초기화
          var 키워드만 사용 가능하며, 기본 자료 타입(Int, Boolean, Double . .)에선 사용이 불가능하다.
@@ -43,7 +48,6 @@ class ListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
 
         // View Binding -> FindViewById 없이 View에서 바로 사용할 수 있게 해줌.
         _binding = FragmentListBinding.inflate(inflater, container, false)
@@ -53,20 +57,28 @@ class ListFragment : Fragment() {
         // Context -> Fragment 에서는 requireContext() 를 사용한다.
         db = ListDatabase.getInstance(requireContext())!! // NOT NULL
 
-        binding.list.layoutManager = LinearLayoutManager(requireContext())
-        binding.list.addItemDecoration(recyclerViewDecoration(20))
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // RecyclerView Decoration
+        val dividerItemDecoration = DividerItemDecoration(binding.listRcview.context, LinearLayoutManager(requireContext()).orientation)
+        binding.listRcview.addItemDecoration(dividerItemDecoration)
+        binding.listRcview.layoutManager = LinearLayoutManager(requireContext())
+        binding.listRcview.addItemDecoration(recyclerViewDecoration(20))
 
         getTask() // 최초 화면 돌입 시 할일 리스트 새로고침
 
-        binding.btnAdd.setOnClickListener{
-            var text = binding.listText.text.toString() // 할 일 내용
+        binding.listBtnAdd.setOnClickListener{
+            var text = binding.listEdtTask.text.toString() // 할 일 내용
 
             var task = TaskEntity(null,1,text,"","",null,20211101,"")
             insertTask(task)
 
-            binding.listText.setText("")
+            binding.listEdtTask.setText("")
         }
-        return view
     }
 
     override fun onDestroyView() {
@@ -81,7 +93,7 @@ class ListFragment : Fragment() {
 
     // RecyclerView 설정
     fun setRecyclerView(taskList : List<TaskEntity>) {
-        binding.list.adapter = ListAdapter(requireContext(), taskList)
+        binding.listRcview.adapter = ListAdapter(requireContext(), taskList)
     }
 
 
