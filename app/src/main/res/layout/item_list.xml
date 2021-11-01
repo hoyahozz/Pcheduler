@@ -6,7 +6,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
+        android:id="@+id/item_list_container"
         android:layout_marginHorizontal="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
@@ -19,24 +20,16 @@
         <ImageView
             android:id="@+id/item_list_img"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.2" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="match_parent"
-            app:layout_constraintLeft_toLeftOf="@+id/item_list"
-            app:layout_constraintRight_toRightOf="@+id/item_list_img"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintWidth_percent="0.1" />
 
         <TextView
             android:id="@+id/item_list"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="25dp"
             android:text="오늘의 할 일"
             android:fontFamily="@font/gowundodum"
             android:gravity="center_vertical"
@@ -46,13 +39,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.8" />
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1px"
-            app:layout_constraintWidth_percent="0.9"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_list"/>
 
 
 
