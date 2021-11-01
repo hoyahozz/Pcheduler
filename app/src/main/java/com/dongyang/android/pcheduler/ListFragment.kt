@@ -23,7 +23,7 @@ import com.dongyang.android.pcheduler.databinding.FragmentListBinding
  */
 
 @SuppressLint("StaticFieldLeak")
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), DeleteListener {
 
     var categoryList = listOf<CategoryEntity>()
     var taskList = listOf<TaskEntity>()
@@ -93,7 +93,7 @@ class ListFragment : Fragment() {
 
     // RecyclerView 설정
     fun setRecyclerView(taskList : List<TaskEntity>) {
-        binding.listRcview.adapter = ListAdapter(requireContext(), taskList)
+        binding.listRcview.adapter = ListAdapter(requireContext(), taskList, this)
     }
 
 
@@ -184,6 +184,25 @@ class ListFragment : Fragment() {
         getTask.execute()
     }
 
+    fun deleteTask(task: TaskEntity) {
+        val deleteTask = object : AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg p0: Unit?) {
+                db.listDAO().deleteTask(task)
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                super.onPostExecute(result)
+                getTask()
+            }
+        }
+        deleteTask.execute()
+    }
+
+    override fun onDeleteListener(task: TaskEntity) {
+        deleteTask(task)
+    }
+
+
 
     // 리사이클러뷰 간격 조정
     inner class recyclerViewDecoration(private val height : Int) : RecyclerView.ItemDecoration() {
@@ -196,4 +215,6 @@ class ListFragment : Fragment() {
             outRect.bottom = height
         }
     }
+
+
 }
