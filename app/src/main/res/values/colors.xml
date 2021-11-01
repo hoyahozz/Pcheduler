@@ -11,5 +11,6 @@
     <color name="transparency">#00ff0000</color>
     <color name="ft_white">#392f31</color>
     <color name="bg_dark">#212121</color>
+    <color name="bar_white">#787878</color>
 
 </resources>
