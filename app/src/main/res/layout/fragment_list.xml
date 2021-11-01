@@ -79,6 +79,7 @@
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintWidth_percent="0.8"
         android:layout_marginTop="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="@id/list_date"
         app:layout_constraintTop_toBottomOf="@id/list_date" />
 
