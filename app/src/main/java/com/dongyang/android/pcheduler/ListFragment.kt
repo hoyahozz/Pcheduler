@@ -1,6 +1,7 @@
 package com.dongyang.android.pcheduler
 
 import android.annotation.SuppressLint
+import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.AsyncTask
 import android.os.Bundle
@@ -9,12 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.database.CategoryEntity
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @Author : Jeong Ho Kim
@@ -60,14 +65,42 @@ class ListFragment : Fragment(), DeleteListener {
         return view
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // RecyclerView Decoration
         val dividerItemDecoration = DividerItemDecoration(binding.listRcview.context, LinearLayoutManager(requireContext()).orientation)
-        binding.listRcview.addItemDecoration(dividerItemDecoration)
-        binding.listRcview.layoutManager = LinearLayoutManager(requireContext())
-        binding.listRcview.addItemDecoration(recyclerViewDecoration(20))
+
+//        binding.listRcview.addItemDecoration(dividerItemDecoration)
+//        binding.listRcview.layoutManager = LinearLayoutManager(requireContext())
+//        binding.listRcview.addItemDecoration(recyclerViewDecoration(20))
+//        binding.listRcview.setOnTouchListener { _, _ ->
+//            SwipeHelperCallback().removePreviousClamp(binding.listRcview)
+//            false
+//        }
+
+        // ItemTouchHelper 를 RecyclerView 와 연결한다.
+        val swipeHelperCallback = SwipeHelperCallback().apply {
+            setClamp(200f)
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.listRcview)
+
+        // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
+        binding.listRcview.apply {
+            this.addItemDecoration(dividerItemDecoration)
+            this.layoutManager = LinearLayoutManager(requireContext())
+            this.addItemDecoration(recyclerViewDecoration(20))
+            this.setOnTouchListener { _, _ ->
+                swipeHelperCallback.removePreviousClamp(binding.listRcview)
+                false
+            }
+
+        }
+
+
 
         getTask() // 최초 화면 돌입 시 할일 리스트 새로고침
 
@@ -93,7 +126,7 @@ class ListFragment : Fragment(), DeleteListener {
 
     // RecyclerView 설정
     fun setRecyclerView(taskList : List<TaskEntity>) {
-        binding.listRcview.adapter = ListAdapter(requireContext(), taskList, this)
+        binding.listRcview.adapter = ListAdapter(requireContext(), taskList, this, db)
     }
 
 
@@ -180,7 +213,6 @@ class ListFragment : Fragment(), DeleteListener {
                 setRecyclerView(taskList)
             }
         }
-
         getTask.execute()
     }
 
@@ -196,6 +228,24 @@ class ListFragment : Fragment(), DeleteListener {
             }
         }
         deleteTask.execute()
+    }
+
+    fun updateTask(task: TaskEntity) {
+        val updateTask = object : AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg p0: Unit?) {
+                // WorkerThread 에서 어떤 일을 할지 정의한다.
+                db.listDAO().updateTask(task)
+            }
+
+
+            override fun onPostExecute(result: Unit?) {
+                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
+                super.onPostExecute(result)
+                getTask()
+            }
+
+        }
+        updateTask.execute()
     }
 
     override fun onDeleteListener(task: TaskEntity) {
@@ -215,6 +265,7 @@ class ListFragment : Fragment(), DeleteListener {
             outRect.bottom = height
         }
     }
+
 
 
 }

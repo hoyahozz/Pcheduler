@@ -1,10 +1,16 @@
 package com.dongyang.android.pcheduler
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Paint
+import android.os.AsyncTask
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.dongyang.android.pcheduler.database.CategoryEntity
+import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListBinding
 
@@ -17,7 +23,8 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
 class ListAdapter(
     val context: Context,
     var list: List<TaskEntity>,
-    var onDeleteListener: DeleteListener
+    var onDeleteListener: DeleteListener,
+    val db : ListDatabase
 ) : RecyclerView.Adapter<ListAdapter.MainViewHolder>() {
 
 
@@ -37,13 +44,30 @@ class ListAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val task = list[position]
 
+
         holder.taskText.text = task.content
-        holder.taskContainer.setOnLongClickListener(object : View.OnLongClickListener {
-            override fun onLongClick(p0: View?): Boolean {
-                onDeleteListener.onDeleteListener(task)
-                return true
+
+        holder.taskDelete.setOnClickListener {
+            onDeleteListener.onDeleteListener(task)
+        }
+
+        holder.taskCheck.setOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                task.complete = "OK"
+                updateTask(task)
+                holder.taskText.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            } else {
+                task.complete = "NO"
+                updateTask(task)
+                holder.taskText.paintFlags = 0
             }
-        })
+        }
+
+        holder.taskText.paintFlags = when (task.complete) {
+            "OK" -> Paint.STRIKE_THRU_TEXT_FLAG
+            else -> 0
+        }
+
 
     }
 
@@ -52,6 +76,29 @@ class ListAdapter(
         var taskText = binding.itemList
         var taskImage = binding.itemListImg
         var taskContainer = binding.itemListContainer
+        var taskDelete = binding.itemListDelete
+        var taskCheck = binding.itemListCheckBox
+
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    fun updateTask(task: TaskEntity) {
+        val updateTask = object : AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg p0: Unit?) {
+                // WorkerThread 에서 어떤 일을 할지 정의한다.
+                db.listDAO().updateTask(task)
+            }
+
+
+
+            override fun onPostExecute(result: Unit?) {
+                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
+                super.onPostExecute(result)
+                Log.d("ListAdapter", "저장 완료" + task.complete)
+            }
+
+        }
+        updateTask.execute()
     }
 
 

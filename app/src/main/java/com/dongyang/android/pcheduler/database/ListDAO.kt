@@ -38,5 +38,8 @@ interface ListDAO {
 
     @Delete
     fun deleteTask(task : TaskEntity)
+
+    @Update
+    fun updateTask(task: TaskEntity)
     
 }
