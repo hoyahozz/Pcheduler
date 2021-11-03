@@ -108,9 +108,12 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/main_bnv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:labelVisibilityMode="unlabeled"
+        android:background="@color/delta"
+        app:itemIconTint="@drawable/menu_selector_color"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/bottom_navi"/>
 
