@@ -12,5 +12,10 @@
     <color name="ft_white">#392f31</color>
     <color name="bg_dark">#212121</color>
     <color name="bar_white">#787878</color>
-
+    <color name="deep_pine">#535d55</color>
+    <color name="oat">#d0b987</color>
+    <color name="ecru">#d6d0ae</color>
+    <color name="storm_dust">#655c57</color>
+    <color name="charcoar">#353c42</color>
+    <color name="dark_ecru">#bbb594</color>
 </resources>
