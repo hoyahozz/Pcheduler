@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,9 @@ import com.dongyang.android.pcheduler.database.CategoryEntity
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -62,23 +66,19 @@ class ListFragment : Fragment(), DeleteListener {
         // Context -> Fragment 에서는 requireContext() 를 사용한다.
         db = ListDatabase.getInstance(requireContext())!! // NOT NULL
 
+        setDefaultCategory()
+
         return view
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // RecyclerView Decoration
         val dividerItemDecoration = DividerItemDecoration(binding.listRcview.context, LinearLayoutManager(requireContext()).orientation)
 
-//        binding.listRcview.addItemDecoration(dividerItemDecoration)
-//        binding.listRcview.layoutManager = LinearLayoutManager(requireContext())
-//        binding.listRcview.addItemDecoration(recyclerViewDecoration(20))
-//        binding.listRcview.setOnTouchListener { _, _ ->
-//            SwipeHelperCallback().removePreviousClamp(binding.listRcview)
-//            false
-//        }
+
 
         // ItemTouchHelper 를 RecyclerView 와 연결한다.
         val swipeHelperCallback = SwipeHelperCallback().apply {
@@ -107,7 +107,13 @@ class ListFragment : Fragment(), DeleteListener {
         binding.listBtnAdd.setOnClickListener{
             var text = binding.listEdtTask.text.toString() // 할 일 내용
 
-            var task = TaskEntity(null,1,text,"","",null,20211101,"")
+            var currentTime : Long = System.currentTimeMillis()
+            var timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale("ko","KR"))
+            var str = timeFormat.format(Date(currentTime))
+            Log.d("Fragment", str)
+
+
+            var task = TaskEntity(null,1,text,"","",str,"","")
             insertTask(task)
 
             binding.listEdtTask.setText("")
@@ -120,8 +126,13 @@ class ListFragment : Fragment(), DeleteListener {
     }
 
     fun setDefaultCategory() {
-        val DEFAULT_CATEGORY = CategoryEntity(1,"DEFAULT")
+
+        var DEFAULT_CATEGORY : CategoryEntity
+
+        getCategory()
+        DEFAULT_CATEGORY = CategoryEntity(1, "DEFAULT")
         insertCategory(DEFAULT_CATEGORY)
+
     }
 
     // RecyclerView 설정
@@ -265,6 +276,7 @@ class ListFragment : Fragment(), DeleteListener {
             outRect.bottom = height
         }
     }
+
 
 
 

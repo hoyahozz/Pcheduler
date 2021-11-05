@@ -30,9 +30,8 @@ data class TaskEntity(
     var favorite : String,
     @ColumnInfo(defaultValue = "NO")
     var complete : String,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
-    var start_time : Long?,
-    var end_time : Long?,
+    var start_time : String,
+    var end_time : String,
     @ColumnInfo(defaultValue = "NO")
     var alarm : String
 

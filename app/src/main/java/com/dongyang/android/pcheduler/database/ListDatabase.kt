@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import java.util.concurrent.Executors
 
 /**
  * @Author : Jeong Ho Kim
@@ -12,9 +13,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * @Description : Database(Schema) 를 정의하는 클래스
  */
 
-@Database(entities = arrayOf(CategoryEntity::class, TaskEntity::class),version = 3)
+@Database(entities = arrayOf(CategoryEntity::class, TaskEntity::class), version = 5)
 abstract class ListDatabase : RoomDatabase() {
-    abstract fun listDAO() : ListDAO
+    abstract fun listDAO(): ListDAO
 
 
 /*
@@ -28,17 +29,18 @@ abstract class ListDatabase : RoomDatabase() {
 
     companion object {
 
-        var INSTANCE : ListDatabase? = null
+        var INSTANCE: ListDatabase? = null
 
-        fun getInstance(context: Context) : ListDatabase? {
-            if(INSTANCE == null) {
-                synchronized(ListDatabase::class){
-                    INSTANCE = Room.databaseBuilder(context.applicationContext,
-                    ListDatabase::class.java, "list.db")
+        fun getInstance(context: Context): ListDatabase? {
+            if (INSTANCE == null) {
+                synchronized(ListDatabase::class) {
+                    INSTANCE = Room.databaseBuilder(
+                        context.applicationContext,
+                        ListDatabase::class.java, "list.db"
+                    )
                         .addCallback(object : RoomDatabase.Callback() {
                             override fun onCreate(db: SupportSQLiteDatabase) {
                                 super.onCreate(db)
-                                db.execSQL("insert into category (type) values ('기본 카테고리')")
                             }
                         })
                         .fallbackToDestructiveMigration() // 업데이트시 모든 데이터를 드랍한다.
