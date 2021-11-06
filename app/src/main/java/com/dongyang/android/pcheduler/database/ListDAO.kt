@@ -17,19 +17,9 @@ interface ListDAO {
      * 넣은 값으로 대체된다는 의미이다. 쉽게 이야기해서 덮어쓰기의 개념.
      */
 
-    // Category Table CRD
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCategory(category : CategoryEntity)
-
-    @Query("SELECT * FROM category")
-    fun getCategory() : List<CategoryEntity>
-
-    @Delete
-    fun deleteCategory(category : CategoryEntity)
-
     // Task Table CRD
 
+    // onConflict (충돌이 일어났을 때 덮어쓰기)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(task : TaskEntity)
 
@@ -41,5 +31,11 @@ interface ListDAO {
 
     @Update
     fun updateTask(task: TaskEntity)
-    
+
+    @Query("SELECT DISTINCT start_time FROM task ORDER BY start_time ASC")
+    fun getTaskDate() : List<String>
+
+    @Query("SELECT * FROM TASK WHERE start_time = :start_time")
+    fun getChildtask(start_time : String) : List<TaskEntity>
+
 }

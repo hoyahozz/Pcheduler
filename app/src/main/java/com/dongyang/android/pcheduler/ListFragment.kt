@@ -1,7 +1,6 @@
 package com.dongyang.android.pcheduler
 
 import android.annotation.SuppressLint
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.AsyncTask
 import android.os.Bundle
@@ -10,20 +9,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.database.CategoryEntity
+import com.dongyang.android.pcheduler.Adapter.ListParentAdapter
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * @Author : Jeong Ho Kim
@@ -34,13 +30,14 @@ import kotlin.math.min
 @SuppressLint("StaticFieldLeak")
 class ListFragment : Fragment(), DeleteListener {
 
-    var categoryList = listOf<CategoryEntity>()
     var taskList = listOf<TaskEntity>()
+    var taskDateList = listOf<String>()
     lateinit var db : ListDatabase // 데이터베이스
     private var _binding : FragmentListBinding? = null // 뷰 바인딩
     // _를 붙이는 이유 : private 한 변수는 관례상 prefix 를 붙이는 경우가 많다.
     private val binding get()  = _binding!!
     // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
+
 
 
     /*
@@ -63,10 +60,9 @@ class ListFragment : Fragment(), DeleteListener {
         val view = binding.root
 
 
+
         // Context -> Fragment 에서는 requireContext() 를 사용한다.
         db = ListDatabase.getInstance(requireContext())!! // NOT NULL
-
-        setDefaultCategory()
 
         return view
     }
@@ -75,48 +71,33 @@ class ListFragment : Fragment(), DeleteListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // RecyclerView Decoration
-        val dividerItemDecoration = DividerItemDecoration(binding.listRcview.context, LinearLayoutManager(requireContext()).orientation)
-
-
-
-        // ItemTouchHelper 를 RecyclerView 와 연결한다.
-        val swipeHelperCallback = SwipeHelperCallback().apply {
-            setClamp(200f)
-        }
-
-        val itemTouchHelper = ItemTouchHelper(swipeHelperCallback)
-        itemTouchHelper.attachToRecyclerView(binding.listRcview)
-
-        // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
+         // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
         binding.listRcview.apply {
-            this.addItemDecoration(dividerItemDecoration)
+            // this.addItemDecoration(dividerItemDecoration)
             this.layoutManager = LinearLayoutManager(requireContext())
-            this.addItemDecoration(recyclerViewDecoration(20))
-            this.setOnTouchListener { _, _ ->
-                swipeHelperCallback.removePreviousClamp(binding.listRcview)
-                false
-            }
-
+            this.addItemDecoration(RecyclerViewDecoration(30))
         }
-
-
 
         getTask() // 최초 화면 돌입 시 할일 리스트 새로고침
 
         binding.listBtnAdd.setOnClickListener{
             var text = binding.listEdtTask.text.toString() // 할 일 내용
 
-            var currentTime : Long = System.currentTimeMillis()
-            var timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale("ko","KR"))
-            var str = timeFormat.format(Date(currentTime))
-            Log.d("Fragment", str)
+            if (text == "") {
+                Toast.makeText(requireContext(), "입력해주세요.",Toast.LENGTH_SHORT).show()
+            } else {
+                var currentTime : Long = System.currentTimeMillis()
+                var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko","KR"))
+                var start_time = timeFormat.format(Date(currentTime))
 
 
-            var task = TaskEntity(null,1,text,"","",str,"","")
-            insertTask(task)
+                var task = TaskEntity(null, start_time,"",text,"NO","NO","NO")
+                insertTask(task)
 
-            binding.listEdtTask.setText("")
+                binding.listEdtTask.setText("")
+            }
+
+
         }
     }
 
@@ -125,19 +106,10 @@ class ListFragment : Fragment(), DeleteListener {
         _binding = null
     }
 
-    fun setDefaultCategory() {
-
-        var DEFAULT_CATEGORY : CategoryEntity
-
-        getCategory()
-        DEFAULT_CATEGORY = CategoryEntity(1, "DEFAULT")
-        insertCategory(DEFAULT_CATEGORY)
-
-    }
 
     // RecyclerView 설정
-    fun setRecyclerView(taskList : List<TaskEntity>) {
-        binding.listRcview.adapter = ListAdapter(requireContext(), taskList, this, db)
+    fun setRecyclerView(taskDateList : List<String>) {
+        binding.listRcview.adapter = ListParentAdapter(requireContext(), taskDateList, this, db)
     }
 
 
@@ -147,50 +119,6 @@ class ListFragment : Fragment(), DeleteListener {
      * 안드로이드에서는 Lint를 통해 성능상 문제가 있을 수 있는 코드를 관리한다.
      * 밑의 코드에서는 AsyncTask 때문에 메모리 누수가 일어날 수 있는데, SuppressLint 를 통해 경고를 무시할 수 있다.
      */
-
-
-    // 카테고리 넣기
-    fun insertCategory(category : CategoryEntity) {
-
-        /**
-         * UI와 관련된 일들은 모두 MainThread 에서 실행한다.
-         * 데이터 통신과 관련된 일은 WorkerThread(Background Thread) 에서 실행한다.
-         */
-
-        val getInsertCategory = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                db.listDAO().insertCategory(category)
-            }
-
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-                getCategory() // 데이터를 넣은 후 새로고침
-            }
-
-        }
-        getInsertCategory.execute()
-    }
-
-    fun getCategory() {
-        val getCategory = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                categoryList = db.listDAO().getCategory()
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                super.onPostExecute(result)
-            }
-        }
-
-        getCategory.execute()
-    }
-
-    fun deleteCategory() {
-
-    }
 
     fun insertTask(task : TaskEntity) {
 
@@ -204,7 +132,7 @@ class ListFragment : Fragment(), DeleteListener {
             override fun onPostExecute(result: Unit?) {
                 // doInBackground 이후 어떤 일을 할 것인지 지정한다.
                 super.onPostExecute(result)
-                getTask() // 데이터를 넣은 후 새로고침
+                getTask()
             }
 
         }
@@ -212,19 +140,18 @@ class ListFragment : Fragment(), DeleteListener {
 
     }
 
-
     fun getTask() {
-        val getTask = object : AsyncTask<Unit, Unit, Unit>() {
+        val getTimeTask = object : AsyncTask<Unit, Unit, Unit>() {
             override fun doInBackground(vararg p0: Unit?) {
-                taskList = db.listDAO().getTask()
+                taskDateList = db.listDAO().getTaskDate()
             }
 
             override fun onPostExecute(result: Unit?) {
                 super.onPostExecute(result)
-                setRecyclerView(taskList)
+                setRecyclerView(taskDateList)
             }
         }
-        getTask.execute()
+        getTimeTask.execute()
     }
 
     fun deleteTask(task: TaskEntity) {
@@ -241,23 +168,7 @@ class ListFragment : Fragment(), DeleteListener {
         deleteTask.execute()
     }
 
-    fun updateTask(task: TaskEntity) {
-        val updateTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                db.listDAO().updateTask(task)
-            }
 
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-                getTask()
-            }
-
-        }
-        updateTask.execute()
-    }
 
     override fun onDeleteListener(task: TaskEntity) {
         deleteTask(task)
@@ -266,7 +177,7 @@ class ListFragment : Fragment(), DeleteListener {
 
 
     // 리사이클러뷰 간격 조정
-    inner class recyclerViewDecoration(private val height : Int) : RecyclerView.ItemDecoration() {
+    inner class RecyclerViewDecoration(private val height : Int) : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,
             view: View,

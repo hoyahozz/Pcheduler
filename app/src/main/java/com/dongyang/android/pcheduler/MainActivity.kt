@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.database.CategoryEntity
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ActivityMainBinding
@@ -26,7 +25,6 @@ import java.lang.IllegalArgumentException
 @SuppressLint("StaticFieldLeak")
 class MainActivity : AppCompatActivity() {
 
-    var categoryList = listOf<CategoryEntity>()
     var taskList = listOf<TaskEntity>()
     lateinit var db : ListDatabase // 데이터베이스
     private lateinit var binding : ActivityMainBinding // 뷰 바인딩

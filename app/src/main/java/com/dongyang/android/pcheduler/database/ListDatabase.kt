@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
  * @Description : Database(Schema) 를 정의하는 클래스
  */
 
-@Database(entities = arrayOf(CategoryEntity::class, TaskEntity::class), version = 5)
+@Database(entities = arrayOf(TaskEntity::class), version = 6)
 abstract class ListDatabase : RoomDatabase() {
     abstract fun listDAO(): ListDAO
 

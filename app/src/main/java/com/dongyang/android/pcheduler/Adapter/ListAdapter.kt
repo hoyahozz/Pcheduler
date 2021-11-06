@@ -1,23 +1,18 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.os.AsyncTask
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.database.CategoryEntity
+import com.dongyang.android.pcheduler.DeleteListener
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListBinding
-import java.util.*
 
 /**
  * @Author : Jeong Ho Kim
@@ -42,7 +37,7 @@ class ListAdapter(
 //        val itemView = LayoutInflater.from(context).inflate(R.layout.item_list, parent, false)
 //        return MainViewHolder(itemView)
 
-        val binding = ItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemListBinding.inflate(LayoutInflater.from(context), parent, false)
         return MainViewHolder(binding)
     }
 
@@ -64,11 +59,7 @@ class ListAdapter(
             "OK" -> Paint.STRIKE_THRU_TEXT_FLAG
             else -> 0
         }
-
-
     }
-
-
 
     @SuppressLint("ClickableViewAccessibility")
     inner class MainViewHolder(private val binding : ItemListBinding) : RecyclerView.ViewHolder(binding.root) {

@@ -16,23 +16,23 @@ import java.io.Serializable
 // 태스크 테이블
 @Entity(
     tableName="task",
-    foreignKeys = arrayOf(ForeignKey // 외래키 지정
-        (entity = CategoryEntity::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("cid"),
-        onDelete = ForeignKey.CASCADE)))
+//    foreignKeys = arrayOf(ForeignKey // 외래키 지정
+//        (entity = CategoryEntity::class,
+//        parentColumns = arrayOf("id"),
+//        childColumns = arrayOf("cid"),
+//        onDelete = ForeignKey.CASCADE)))
+//    indices = [Index(value = ["pid"], unique = true)] // 유니크키 설정
+)
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
     var id : Int?,
-    var cid : Int?,
+    var start_time : String,
+    var end_time : String,
     var content : String,
     @ColumnInfo(defaultValue = "NO")
     var favorite : String,
     @ColumnInfo(defaultValue = "NO")
     var complete : String,
-    var start_time : String,
-    var end_time : String,
     @ColumnInfo(defaultValue = "NO")
     var alarm : String
-
 )
