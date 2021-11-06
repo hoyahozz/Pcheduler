@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.prolificinteractive:material-calendarview:1.4.3' //calendarview
+    implementation 'com.github.florent37:singledateandtimepicker:2.2.7' //date and time picker
 
 
     // 10.21 Room Library
