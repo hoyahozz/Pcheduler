@@ -30,13 +30,14 @@ import java.util.*
 @SuppressLint("StaticFieldLeak")
 class ListFragment : Fragment(), DeleteListener {
 
-    var taskList = listOf<TaskEntity>()
     var taskDateList = listOf<String>()
     lateinit var db : ListDatabase // 데이터베이스
     private var _binding : FragmentListBinding? = null // 뷰 바인딩
     // _를 붙이는 이유 : private 한 변수는 관례상 prefix 를 붙이는 경우가 많다.
     private val binding get()  = _binding!!
     // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
+
+    var today = ""
 
 
 
@@ -71,6 +72,12 @@ class ListFragment : Fragment(), DeleteListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // TODO : 클릭 시 오늘의 날짜 설정하게 변경하기(11/06)
+        var currentTime : Long = System.currentTimeMillis()
+        var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko","KR"))
+        today = timeFormat.format(Date(currentTime))
+
+
          // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
         binding.listRcview.apply {
             // this.addItemDecoration(dividerItemDecoration)
@@ -80,18 +87,25 @@ class ListFragment : Fragment(), DeleteListener {
 
         getTask() // 최초 화면 돌입 시 할일 리스트 새로고침
 
+// TODO : 해당 날짜로 스크롤 내려가게 설정하기 (11/06)
+/*
+        for (i in taskDateList.indices) {
+            if(taskDateList[i] == "2021-11-07") {
+                binding.listRcview.scrollToPosition(i)
+                break
+            }
+        }
+*/
+
+
+
         binding.listBtnAdd.setOnClickListener{
             var text = binding.listEdtTask.text.toString() // 할 일 내용
 
             if (text == "") {
-                Toast.makeText(requireContext(), "입력해주세요.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "내용을 입력해주세요.",Toast.LENGTH_SHORT).show()
             } else {
-                var currentTime : Long = System.currentTimeMillis()
-                var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko","KR"))
-                var start_time = timeFormat.format(Date(currentTime))
-
-
-                var task = TaskEntity(null, start_time,"",text,"NO","NO","NO")
+                var task = TaskEntity(null, today,"",text,"NO","NO","NO")
                 insertTask(task)
 
                 binding.listEdtTask.setText("")

@@ -8,24 +8,29 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.DeleteListener
+import com.dongyang.android.pcheduler.TabDialog
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListBinding
 
+
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-10-30
- * @Description : 리스트 프래그먼트 리사이클러뷰의 어댑터
+ * @Description : 중첩 리사이클러뷰의 자식, 할 일의 구체적 내용을 담고 있음.
  */
 
 class ListAdapter(
     val context: Context,
     var list: List<TaskEntity>,
     var onDeleteListener: DeleteListener,
-    val db : ListDatabase
+    val db: ListDatabase
 ) : RecyclerView.Adapter<ListAdapter.MainViewHolder>(){
+
+
 
 
     override fun getItemCount(): Int {
@@ -45,6 +50,7 @@ class ListAdapter(
         val task = list[position]
 
 
+
         holder.taskText.text = task.content
         holder.taskDelete.setOnClickListener {
             onDeleteListener.onDeleteListener(task)
@@ -59,16 +65,22 @@ class ListAdapter(
             "OK" -> Paint.STRIKE_THRU_TEXT_FLAG
             else -> 0
         }
+
+        val manager = (context as AppCompatActivity).supportFragmentManager
+        holder.taskContainer.setOnClickListener {
+            TabDialog().show(manager, "TabDialog")
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    inner class MainViewHolder(private val binding : ItemListBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MainViewHolder(private val binding: ItemListBinding) : RecyclerView.ViewHolder(
+        binding.root
+    ) {
         var taskText = binding.itemList
         var taskImage = binding.itemListImg
         var taskContainer = binding.itemListContainer
         var taskDelete = binding.itemListDelete
         var taskCheck = binding.itemListCheckBox
-
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -89,7 +101,7 @@ class ListAdapter(
     }
 
     // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수
-    private fun checkTask(task : TaskEntity, cb : CheckBox, tv : TextView) {
+    private fun checkTask(task: TaskEntity, cb: CheckBox, tv: TextView) {
         cb.setOnCheckedChangeListener { button, ischecked ->
             if (ischecked) {
                 task.complete = "OK"

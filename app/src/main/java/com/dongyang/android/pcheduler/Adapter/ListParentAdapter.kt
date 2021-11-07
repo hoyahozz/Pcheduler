@@ -24,7 +24,7 @@ import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-11-05
- * @Description :
+ * @Description : 중첩 리사이클러뷰의 부모, 날짜를 담는 역할을 수행함
  */
 
 class ListParentAdapter(
@@ -34,8 +34,8 @@ class ListParentAdapter(
     val db: ListDatabase
 ) : RecyclerView.Adapter<ListParentAdapter.ListParentViewHolder>() {
 
-    var childTask = listOf<TaskEntity>()
-    var childList = mutableListOf<List<TaskEntity>>()
+//    var childTask = listOf<TaskEntity>()
+//    var childList = mutableListOf<List<TaskEntity>>()
 
     override fun getItemCount(): Int {
         return list.size

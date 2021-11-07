@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-11-06
- * @Description :
+ * @Description : 리사이클러뷰의 간격 조정을 돕는 클래스
  */
 
 // 리사이클러뷰 간격 조정

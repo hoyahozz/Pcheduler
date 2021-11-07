@@ -16,9 +16,23 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
         android:id="@+id/tab_picker_notif"
         app:layout_constraintTop_toBottomOf="@+id/tab_txt_notif"
         app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:id="@+id/tab_set_alarm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/tab_picker_notif"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/transparency"
+        android:text="확인"
+        android:textColor="@color/bg_dark"
+        />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -134,12 +134,12 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         return (viewHolder as ListAdapter.MainViewHolder).taskContainer
     }
 
-    // isClaped 를 View의 Tag로 관리한다.
+    // isClamped 를 View의 Tag로 관리한다.
     private fun setTag(viewHolder: RecyclerView.ViewHolder, isClamped : Boolean) {
         viewHolder.itemView.tag = isClamped
     }
 
-    // isClaped 를 View의 Tag로 관리한다.
+    // isClamped 를 View의 Tag로 관리한다.
     private fun getTag(viewHolder: RecyclerView.ViewHolder) : Boolean {
         return viewHolder.itemView.tag as? Boolean ?: false
     }
