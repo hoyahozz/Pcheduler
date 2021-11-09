@@ -36,6 +36,6 @@ interface ListDAO {
     fun getTaskDate() : List<String>
 
     @Query("SELECT * FROM TASK WHERE start_time = :start_time")
-    fun getChildtask(start_time : String) : List<TaskEntity>
+    fun getChildTask(start_time : String) : List<TaskEntity>
 
 }

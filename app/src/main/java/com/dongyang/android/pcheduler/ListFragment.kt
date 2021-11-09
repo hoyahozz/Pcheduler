@@ -204,5 +204,4 @@ class ListFragment : Fragment(), DeleteListener {
 
 
 
-
 }

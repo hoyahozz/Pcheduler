@@ -25,7 +25,6 @@ import java.lang.IllegalArgumentException
 @SuppressLint("StaticFieldLeak")
 class MainActivity : AppCompatActivity() {
 
-    var taskList = listOf<TaskEntity>()
     lateinit var db : ListDatabase // 데이터베이스
     private lateinit var binding : ActivityMainBinding // 뷰 바인딩
     /*

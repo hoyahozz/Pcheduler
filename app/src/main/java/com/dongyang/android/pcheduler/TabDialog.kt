@@ -19,7 +19,7 @@ import com.google.android.material.tabs.TabLayout
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-11-07
- * @Description :
+ * @Description : 할 일 목록을 누르면 화면에 나타나는 다이얼로그
  */
 
 class TabDialog : DialogFragment() {
@@ -31,7 +31,7 @@ class TabDialog : DialogFragment() {
         isCancelable = true
     }
 
-    private lateinit var dialogBinding : DialogDetailBinding
+    private lateinit var dialogBinding: DialogDetailBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +48,8 @@ class TabDialog : DialogFragment() {
         changeView(0, dialogBinding.dialogTabContainer)
 
         dialogBinding.dialogTabLayout
-        dialogBinding.dialogTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        dialogBinding.dialogTabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
 
@@ -58,10 +59,7 @@ class TabDialog : DialogFragment() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
 
-                    0 -> {
-                        changeView(0, dialogBinding.dialogTabContainer)
-                        Log.d("My Dialog", tab.position.toString())
-                    }
+                    0 -> changeView(0, dialogBinding.dialogTabContainer)
                     1 -> changeView(1, dialogBinding.dialogTabContainer)
                 }
             }
@@ -69,17 +67,15 @@ class TabDialog : DialogFragment() {
         })
     }
 
-    fun changeView(position : Int, container : ConstraintLayout) {
-
-        Log.d("My Dialog", "get Change View")
-
+    // 컨태이너의 뷰 영역을 바꾸는 함수
+    fun changeView(position: Int, container: ConstraintLayout) {
         val inflater = layoutInflater
 
         if (container.childCount > 0) {
             container.removeViewAt(0)
         }
 
-        var view : View? = null
+        var view: View? = null
 
         when (position) {
             0 -> view = inflater.inflate(R.layout.tab_set_date, container, false)
@@ -90,8 +86,6 @@ class TabDialog : DialogFragment() {
             container.addView(view)
         }
 
-        Log.d("My Dialog", position.toString())
 
     }
-
 }

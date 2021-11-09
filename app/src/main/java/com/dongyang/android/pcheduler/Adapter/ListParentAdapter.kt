@@ -81,24 +81,43 @@ class ListParentAdapter(
 
     @SuppressLint("StaticFieldLeak")
     fun getTask(recyclerView: RecyclerView, date: String, context: Context, constraintLayout: ConstraintLayout) {
-        var getTask = object : AsyncTask<Unit, Unit, Unit>() {
+        var getTask = object : AsyncTask<Unit, List<TaskEntity>, Unit>() {
 
             override fun doInBackground(vararg p0: Unit?) {
-                var childTask = db.listDAO().getChildtask(date)
+                var childTask = db.listDAO().getChildTask(date)
+                publishProgress(childTask)
+
 
                 // setRecyclerView(...) -> Background 단계에서 RecyclerView 설정 X
 
-                constraintLayout.post{
-                    setRecyclerView(
-                        childTask,
-                        recyclerView,
-                        context
-                    )
-                }
-
+//                constraintLayout.post{
+//                    setRecyclerView(
+//                        childTask,
+//                        recyclerView,
+//                        context
+//                    )
+//                }
                 // Main Thread 에서만 UI 수정이 가능하다. 고로, Main Thread를 호출해야 한다.
                 // TODO : Thread, Run, Handler 공부하기 (11/06 김정호)
 
+
+
+
+            }
+
+            override fun onProgressUpdate(vararg childTask: List<TaskEntity>?) {
+
+                val count = childTask.size
+
+                for (i in 0 until count) {
+                    childTask[i]?.let {
+                        setRecyclerView(
+                            it,
+                            recyclerView,
+                            context
+                        )
+                    }
+                }
             }
 
             override fun onPostExecute(result: Unit?) {
