@@ -99,10 +99,6 @@ class ListParentAdapter(
 //                }
                 // Main Thread 에서만 UI 수정이 가능하다. 고로, Main Thread를 호출해야 한다.
                 // TODO : Thread, Run, Handler 공부하기 (11/06 김정호)
-
-
-
-
             }
 
             override fun onProgressUpdate(vararg childTask: List<TaskEntity>?) {

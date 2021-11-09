@@ -11,10 +11,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.DeleteListener
+import com.dongyang.android.pcheduler.DetailBottomSheet
+import com.dongyang.android.pcheduler.R
 import com.dongyang.android.pcheduler.TabDialog
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
 /**
@@ -68,7 +71,9 @@ class ListAdapter(
 
         val manager = (context as AppCompatActivity).supportFragmentManager
         holder.taskContainer.setOnClickListener {
-            TabDialog().show(manager, "TabDialog")
+//            TabDialog().show(manager, "TabDialog")
+            val bottomSheet = DetailBottomSheet(task.content)
+            bottomSheet.show(manager, "bottomSheet")
         }
     }
 
@@ -114,5 +119,4 @@ class ListAdapter(
             }
         }
     }
-
 }
