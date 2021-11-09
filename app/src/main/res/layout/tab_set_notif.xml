@@ -2,37 +2,44 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/linen"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tab_txt_notif"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="30dp"
         android:text="알람 설정하기"
-        android:textSize="25sp"
+        android:textSize="18sp"
         android:fontFamily="@font/nanumgothic"
         android:textColor="@color/delta"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
-        android:layout_width="300dp"
-        android:layout_height="150dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintHorizontal_weight="0.8"
         android:id="@+id/tab_picker_notif"
         app:layout_constraintTop_toBottomOf="@+id/tab_txt_notif"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <Button
         android:id="@+id/tab_set_alarm_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/tab_picker_notif"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@color/transparency"
-        android:text="확인"
-        android:textColor="@color/bg_dark"
-        />
+        android:layout_marginBottom="15dp"
+        android:textSize="15sp"
+        android:text="확인" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

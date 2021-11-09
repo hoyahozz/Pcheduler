@@ -9,7 +9,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="22dp"
         android:id="@+id/title"
         android:text="Pcheduler"
         android:fontFamily="@font/nanumgothic"
@@ -26,12 +26,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/list_edt_task"
         android:fontFamily="@font/maruburi"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:backgroundTint="@color/delta"
         android:hint="Insert Your Task"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="25dp"
+        android:layout_marginBottom="10dp"
         android:inputType="textMultiLine|textNoSuggestions"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintLeft_toRightOf="parent"
@@ -40,16 +42,17 @@
 
     <ImageButton
         android:id="@+id/list_btn_add"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         app:srcCompat="@drawable/ic_add"
         android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
         android:padding="0dp"
         android:background="@color/transparency"
         app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintLeft_toLeftOf="@+id/list_edt_task"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/list_edt_task"
         app:layout_constraintTop_toTopOf="@id/list_edt_task"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -58,7 +61,7 @@
         android:id="@+id/list_rcview"
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="@id/list_edt_task"
         app:layout_constraintTop_toBottomOf="@id/list_edt_task" />
