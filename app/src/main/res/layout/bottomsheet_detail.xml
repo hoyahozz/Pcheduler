@@ -6,7 +6,6 @@
     android:id="@+id/dbs_container"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/bottom_sheet_behavior"
-    android:animateLayoutChanges="true"
     android:background="@color/linen">
 
     <EditText
