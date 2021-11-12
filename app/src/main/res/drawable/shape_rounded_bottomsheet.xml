@@ -4,10 +4,8 @@
     android:padding="10dp">
 
     <solid
-        android:color="@color/linen"/>
+        android:color="@color/delta"/>
     <corners
-        android:bottomLeftRadius="30dp"
-        android:bottomRightRadius="30dp"
         android:topLeftRadius="30dp"
         android:topRightRadius="30dp"/>
 

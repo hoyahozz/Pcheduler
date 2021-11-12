@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:layout_width="270dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/list_edt_task"
         android:fontFamily="@font/maruburi"
@@ -33,6 +33,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginBottom="10dp"
         android:inputType="textMultiLine|textNoSuggestions"
+        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintLeft_toLeftOf="parent"
