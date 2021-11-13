@@ -5,9 +5,11 @@ import android.content.Context
 import android.graphics.Paint
 import android.os.AsyncTask
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.DeleteListener
@@ -72,8 +74,14 @@ class ListAdapter(
         val manager = (context as AppCompatActivity).supportFragmentManager
         holder.taskContainer.setOnClickListener {
 //            TabDialog().show(manager, "TabDialog")
-            val bottomSheet = DetailBottomSheet(task.content)
-            bottomSheet.show(manager, "bottomSheet")
+            val bottomSheet = DetailBottomSheet(task)
+            bottomSheet.show(manager, bottomSheet.tag)
+        }
+
+        if(task.end_time != "") {
+            val taskET = "~ " + task.end_time.substring(5, task.end_time.length)
+            holder.taskEndTime.text = taskET
+            holder.taskEndTime.visibility = View.VISIBLE
         }
     }
 
@@ -86,6 +94,7 @@ class ListAdapter(
         var taskContainer = binding.itemListContainer
         var taskDelete = binding.itemListDelete
         var taskCheck = binding.itemListCheckBox
+        var taskEndTime = binding.itemListEndTime
     }
 
     @SuppressLint("StaticFieldLeak")

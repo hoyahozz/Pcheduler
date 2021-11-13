@@ -182,13 +182,24 @@ class ListFragment : Fragment(), DeleteListener {
         deleteTask.execute()
     }
 
+    fun updateTask(task : TaskEntity) {
+        val updateTask = object : AsyncTask<Unit, Unit, Unit> () {
+            override fun doInBackground(vararg p0: Unit?) {
+                db.listDAO().updateTask(task)
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                super.onPostExecute(result)
+                getTask()
+            }
+        }.execute()
+    }
+
 
 
     override fun onDeleteListener(task: TaskEntity) {
         deleteTask(task)
     }
-
-
 
     // 리사이클러뷰 간격 조정
     inner class RecyclerViewDecoration(private val height : Int) : RecyclerView.ItemDecoration() {
