@@ -2,38 +2,32 @@ package com.dongyang.android.pcheduler
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.ProgressDialog.show
 import android.content.Context
+import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.transition.TransitionManager
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.view.animation.AlphaAnimation
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.BottomsheetDetailBinding
 import com.dongyang.android.pcheduler.databinding.DialogCalendarBinding
-import com.dongyang.android.pcheduler.databinding.DialogDetailBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.dongyang.android.pcheduler.databinding.DialogDateandtimePickerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 /**
  * @Author : Jeong Ho Kim
@@ -48,6 +42,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
     private val task = task
     private lateinit var pickDate: String
     private var onButton = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +63,28 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        binding.dbsEtContent.requestFocus() // EditText에 포커스를 올림
+        // imm.showSoftInput(binding.dbsEtContent, InputMethodManager.SHOW_FORCED)
+        imm.hideSoftInputFromWindow(view.windowToken, HIDE_NOT_ALWAYS)
 
-        var start_time = ""
-        var end_time = ""
+
+        // 키보드 사라지면 다이얼로그 종료되게 설정
+//        var keyboardVisibilityUtils = activity?.let {
+//            KeyboardVisibilityUtils(it.window,
+//                onHideKeyboard = {
+//                    binding.root.run {
+//                        dismiss()
+//                    }
+//                }
+//            )
+//        }
+
+        db = ListDatabase.getInstance(requireContext())!! // DB
+
+        var sTime = ""
+        var eTime = ""
+        var pickAlarm = ""
 
         // FragmentResult ( Fragment <-> Fragment 통신)
         parentFragmentManager.setFragmentResultListener("requestKey", this) { resultKey, bundle ->
@@ -89,38 +103,39 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
             Log.d("result ::", pickDate)
         }
 
+        // FragmentResult ( Fragment <-> Fragment 통신)
+        parentFragmentManager.setFragmentResultListener("alarmKey", this) { resultKey, bundle ->
+            pickAlarm = bundle.getString("alarm")!!
+            task.alarm = pickAlarm
+            Log.d("alarm result ::", pickAlarm)
+        }
+
         // 시작 시간, 종료 시간이 널이 아니라면 버튼에 값 넣기
         task.start_time.let {
-            start_time = task.start_time.substring(5, task.start_time.length) // 시작 버튼에 들어갈 값
-            binding.dbsBtnStartDate.text = start_time
+            sTime = task.start_time.substring(5, task.start_time.length) // 시작 버튼에 들어갈 값
+            binding.dbsBtnStartDate.text = sTime
         }
 
         task.end_time.let {
             if (task.end_time != "") {
-                end_time = it.substring(5, task.end_time.length)
-                binding.dbsBtnEndDate.text = end_time
+                eTime = it.substring(5, task.end_time.length)
+                binding.dbsBtnEndDate.text = eTime
             }
         }
 
-
-
         binding.dbsEtContent.setText(task.content)
-        db = ListDatabase.getInstance(requireContext())!! // DB
-
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        binding.dbsEtContent.requestFocus() // EditText에 포커스를 올림
-        imm.showSoftInput(binding.dbsEtContent, 0)
 
 
         binding.dbsEtContent.imeOptions = EditorInfo.IME_ACTION_DONE // EditText 완료 버튼 설정
         // 완료 버튼을 눌렀을 때 할 행동 설정
         binding.dbsEtContent.setOnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // TODO : 완료 버튼을 눌렀을 때 데이터베이스 수정 일어나게 설정하기 (11/13)
+                // TODO : 완료 버튼을 눌렀을 때 데이터베이스 수정 일어나게 설정하기 (11/13) -> DONE
                 task.content = binding.dbsEtContent.text.toString()
                 updateTask(task)
 
                 Log.d("Update Test :: ", task.start_time + " + " + task.end_time)
+                Log.d("Update Test :: ", "(${task.alarm}")
 
                 dismiss()
                 true
@@ -130,17 +145,25 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
 
         val manager = (context as AppCompatActivity).supportFragmentManager
-        val calendar = Calendar()
+
 
         // 시작 버튼을 눌렀을 때 달력 출력되게 설정하였음.
         binding.dbsBtnStartDate.setOnClickListener {
             onButton = "start"
-            calendar.show(parentFragmentManager, "CalendarView")
+
+            val sCalendar = BottomSheetCalendar(task.start_time, onButton)
+            sCalendar.show(parentFragmentManager, "CalendarView")
         }
 
         binding.dbsBtnEndDate.setOnClickListener {
             onButton = "end"
-            Calendar().show(manager, "CalendarView")
+            val eCalendar = BottomSheetCalendar(task.start_time, onButton)
+            eCalendar.show(manager, "CalendarView")
+        }
+
+        binding.dbsBtnAlarm.setOnClickListener {
+            val alarm = BottomSheetAlarm()
+            alarm.show(parentFragmentManager, alarm.tag)
         }
     }
 
@@ -160,16 +183,12 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         updateTask.execute()
     }
 
-
     // TODO : Inner class로 호출 시 오류, 원인 알아보기(11/10)
     // TODO : 종료 날짜가 시작 날짜보다 멀어야 함.
-    class Calendar : DialogFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
+    class BottomSheetCalendar(sDate: String, type: String) : DialogFragment() {
 
-            // 화면 밖을 누르면 dismiss 되게 설정
-            isCancelable = true
-        }
+        val sDate = sDate
+        val type = type
 
         private lateinit var dialogBinding: DialogCalendarBinding
 
@@ -185,19 +204,39 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
+            val fm = SimpleDateFormat("yyyy-MM-dd")
+
+            dialogBinding.dialogDatePicker.state().edit()
+
+
             // 날짜를 선택했을 때 나타나는 이벤트 리스너
             // date -> CalendarDay(2021-10-23)
             dialogBinding.dialogDatePicker.setOnDateChangedListener { widget, date, selected ->
 
+
+                // 0이 붙게 convert 한다.
+                var month =
+                    if(date.month + 1 < 10) {
+                        "0" + (date.month + 1).toString()
+                    } else {
+                        (date.month + 1).toString()
+                    }
+                var day =
+                    if(date.day < 10) {
+                        "0" + date.day.toString()
+                    } else {
+                        date.day.toString()
+                    }
+
                 var pickDate =
-                    date.year.toString() + "-" + (date.month + 1).toString() + "-" + date.day.toString()
+                    date.year.toString() + "-$month-$day"
                 // 데이터베이스에 넣을 값
                 /*
                     pickDate.toString -> 2021.10.23일인데 2021-9-23 으로 결과값이 나오는 것을 발견하였음.
                     이유는, toString 으로 하면 Month가 배열로 취급받아서 index 값으로 나오기 때문임.
                  */
 
-                var viewDate = (date.month + 1).toString() + "-" + date.day.toString()
+                var viewDate = "$month-$day"
                 // 뷰에 보여질 값
 
                 // FragmentResult
@@ -209,6 +248,110 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
                 )
                 dismiss()
             }
+        }
+    }
+
+    // 알람 설정 다이얼로그
+    class BottomSheetAlarm() : DialogFragment() {
+
+        private lateinit var binding: DialogDateandtimePickerBinding
+
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
+            binding = DialogDateandtimePickerBinding.inflate(inflater,container, false)
+            return binding.root
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            var pickAlarm : String = ""
+
+            // Date And Time Picker 설정
+            binding.dialogDateTimePicker.apply {
+                this.setDisplayMonthNumbers(false)
+                this.setDisplayYears(false)
+                this.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.gowundodum))
+                this.addOnDateChangedListener { displayed, date ->
+                    // D/Pick Date ::: Fri Nov 19 16:50:00 GMT+09:00 2021
+                    val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    pickAlarm = fm.format(date)
+                    Log.d("Pick Date :: ", pickAlarm)
+                }
+            }
+
+            // 확인 버튼 눌렀을 때
+            binding.dialogDateTimePickerConfirmBtn.setOnClickListener {
+                // FragmentResult
+                parentFragmentManager.setFragmentResult(
+                    "alarmKey", bundleOf(
+                        "alarm" to pickAlarm
+                    )
+                )
+                dismiss()
+            }
+
+            // 초기화 버튼 눌렀을 때
+            binding.dialogDateTimePickerInitBtn.setOnClickListener {
+
+                pickAlarm = ""
+                parentFragmentManager.setFragmentResult(
+                    "alarmKey", bundleOf(
+                        "alarm" to pickAlarm
+                    )
+                )
+                dismiss()
+            }
+
+        }
+    }
+
+
+
+    // 키보드가 올라오고 내려갈 때 동작하는 클래스
+    class KeyboardVisibilityUtils(
+        private val window: Window,
+        //private val onShowKeyboard: ((keyboardHeight: Int) -> Unit)? = null,
+        private val onShowKeyboard: (() -> Unit)? = null,
+        private val onHideKeyboard: (() -> Unit)? = null
+    ) {
+
+        private val MIN_KEYBOARD_HEIGHT_PX = 150
+
+        private val windowVisibleDisplayFrame = Rect()
+        private var lastVisibleDecorViewHeight: Int = 0
+
+
+        private val onGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+            window.decorView.getWindowVisibleDisplayFrame(windowVisibleDisplayFrame)
+            val visibleDecorViewHeight = windowVisibleDisplayFrame.height()
+
+            // Decide whether keyboard is visible from changing decor view height.
+            if (lastVisibleDecorViewHeight != 0) {
+                if (lastVisibleDecorViewHeight > visibleDecorViewHeight + MIN_KEYBOARD_HEIGHT_PX) {
+                    // Calculate current keyboard height (this includes also navigation bar height when in fullscreen mode).
+                    //val currentKeyboardHeight = window.decorView.height - windowVisibleDisplayFrame.bottom
+                    // Notify listener about keyboard being shown.
+                    //onShowKeyboard?.invoke(currentKeyboardHeight)
+                    onShowKeyboard?.invoke()
+                } else if (lastVisibleDecorViewHeight + MIN_KEYBOARD_HEIGHT_PX < visibleDecorViewHeight) {
+                    // Notify listener about keyboard being hidden.
+                    onHideKeyboard?.invoke()
+                }
+            }
+            // Save current decor view height for the next call.
+            lastVisibleDecorViewHeight = visibleDecorViewHeight
+        }
+
+        init {
+            window.decorView.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
+        }
+
+        fun detachKeyboardListeners() {
+            window.decorView.viewTreeObserver.removeOnGlobalLayoutListener(onGlobalLayoutListener)
         }
     }
 }

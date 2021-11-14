@@ -87,7 +87,7 @@ class ListFragment : Fragment(), DeleteListener {
 
         getTask() // 최초 화면 돌입 시 할일 리스트 새로고침
 
-// TODO : 해당 날짜로 스크롤 내려가게 설정하기 (11/06)
+        // TODO : 해당 날짜로 스크롤 내려가게 설정하기 (11/06)
 /*
         for (i in taskDateList.indices) {
             if(taskDateList[i] == "2021-11-07") {
@@ -105,7 +105,7 @@ class ListFragment : Fragment(), DeleteListener {
             if (text == "") {
                 Toast.makeText(requireContext(), "내용을 입력해주세요.",Toast.LENGTH_SHORT).show()
             } else {
-                var task = TaskEntity(null, today,"",text,"NO","NO","NO")
+                var task = TaskEntity(null, today,"",text,"NO","NO","")
                 insertTask(task)
 
                 binding.listEdtTask.setText("")
@@ -181,21 +181,6 @@ class ListFragment : Fragment(), DeleteListener {
         }
         deleteTask.execute()
     }
-
-    fun updateTask(task : TaskEntity) {
-        val updateTask = object : AsyncTask<Unit, Unit, Unit> () {
-            override fun doInBackground(vararg p0: Unit?) {
-                db.listDAO().updateTask(task)
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                super.onPostExecute(result)
-                getTask()
-            }
-        }.execute()
-    }
-
-
 
     override fun onDeleteListener(task: TaskEntity) {
         deleteTask(task)

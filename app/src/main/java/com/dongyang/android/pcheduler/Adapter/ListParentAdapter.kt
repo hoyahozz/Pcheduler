@@ -55,9 +55,7 @@ class ListParentAdapter(
 
         holder.date.text = parentDate
 
-        val divideItemDecoration =
-            DividerItemDecoration(holder.child.context, LinearLayoutManager(context).orientation)
-
+        var divideItemDecoration = DividerItemDecoration(holder.child.context, LinearLayoutManager(context).orientation)
         // ItemTouchHelper 를 RecyclerView 와 연결한다.
         val swipeHelperCallback = SwipeHelperCallback().apply {
             setClamp(200f)
@@ -69,7 +67,7 @@ class ListParentAdapter(
         holder.child.apply {
             this.addItemDecoration(divideItemDecoration)
             this.layoutManager = LinearLayoutManager(context)
-            this.addItemDecoration(RecyclerViewDecoration(20))
+            // this.addItemDecoration(RecyclerViewDecoration(20))
             this.setOnTouchListener { _, _ ->
                 swipeHelperCallback.removePreviousClamp(this)
                 false

@@ -83,6 +83,10 @@ class ListAdapter(
             holder.taskEndTime.text = taskET
             holder.taskEndTime.visibility = View.VISIBLE
         }
+
+        if(task.alarm != "") {
+            holder.taskImage.setImageResource(R.drawable.ic_alarm_on)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
