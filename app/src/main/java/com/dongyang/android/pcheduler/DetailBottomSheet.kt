@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.ProgressDialog.show
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
@@ -198,6 +199,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
             savedInstanceState: Bundle?
         ): View? {
             dialogBinding = DialogCalendarBinding.inflate(inflater, container, false)
+            dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             return dialogBinding.root
         }
 
@@ -212,8 +214,6 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
             // 날짜를 선택했을 때 나타나는 이벤트 리스너
             // date -> CalendarDay(2021-10-23)
             dialogBinding.dialogDatePicker.setOnDateChangedListener { widget, date, selected ->
-
-
                 // 0이 붙게 convert 한다.
                 var month =
                     if(date.month + 1 < 10) {
