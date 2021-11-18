@@ -1,9 +1,10 @@
 package com.dongyang.android.pcheduler
 
 import android.annotation.SuppressLint
-import android.app.Dialog
+import android.app.*
 import android.app.ProgressDialog.show
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
@@ -15,6 +16,7 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -163,7 +165,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         }
 
         binding.dbsBtnAlarm.setOnClickListener {
-            val alarm = BottomSheetAlarm()
+            val alarm = BottomSheetAlarm(task)
             alarm.show(parentFragmentManager, alarm.tag)
         }
     }
@@ -251,10 +253,30 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         }
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun createNotificationChannel(notificationManager: NotificationManager, context: Context) {
+
+        val NOTIFICATION_CHANNEL_ID = "alarm_channel"
+        val NOTIFICATION_CHANNEL_NAME = "My Alarm"
+        val descriptionText = "my alarm"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            NOTIFICATION_CHANNEL_NAME,
+            importance
+        ).apply {
+            enableLights(true)
+            description = descriptionText
+        }
+        notificationManager.createNotificationChannel(channel)
+    }
+
     // 알람 설정 다이얼로그
-    class BottomSheetAlarm() : DialogFragment() {
+    class BottomSheetAlarm(task: TaskEntity) : DialogFragment() {
 
         private lateinit var binding: DialogDateandtimePickerBinding
+        private var task = task
 
         override fun onCreateView(
             inflater: LayoutInflater,
@@ -269,6 +291,9 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
             super.onViewCreated(view, savedInstanceState)
 
             var pickAlarm : String = ""
+            var calendar = Calendar.getInstance()
+            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
             // Date And Time Picker 설정
             binding.dialogDateTimePicker.apply {
@@ -276,6 +301,9 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
                 this.setDisplayYears(false)
                 this.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.gowundodum))
                 this.addOnDateChangedListener { displayed, date ->
+
+                    calendar.time = date
+
                     // D/Pick Date ::: Fri Nov 19 16:50:00 GMT+09:00 2021
                     val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                     pickAlarm = fm.format(date)
@@ -291,6 +319,17 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
                         "alarm" to pickAlarm
                     )
                 )
+
+                var pendingRequestCode : Int = task.id!!
+
+                var pendingIntent = PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
+
+                alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY, pendingIntent
+                    )
+
+                Toast.makeText(context, "Alarm Test :: $pendingRequestCode, ${calendar.timeInMillis}" , Toast.LENGTH_LONG).show()
+
                 dismiss()
             }
 
@@ -308,8 +347,6 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
         }
     }
-
-
 
     // 키보드가 올라오고 내려갈 때 동작하는 클래스
     class KeyboardVisibilityUtils(

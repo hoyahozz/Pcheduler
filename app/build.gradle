@@ -65,4 +65,6 @@ dependencies {
     // 10/30 Room Database Viewer
     debugImplementation 'com.amitshekhar.android:debug-db-encrypt:1.0.6'
 
+
+
 }
