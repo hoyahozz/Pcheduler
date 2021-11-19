@@ -154,18 +154,18 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         binding.dbsBtnStartDate.setOnClickListener {
             onButton = "start"
 
-            val sCalendar = BottomSheetCalendar(task.start_time, onButton)
+            val sCalendar = CalendarDialog(task.start_time, onButton)
             sCalendar.show(parentFragmentManager, "CalendarView")
         }
 
         binding.dbsBtnEndDate.setOnClickListener {
             onButton = "end"
-            val eCalendar = BottomSheetCalendar(task.start_time, onButton)
+            val eCalendar = CalendarDialog(task.start_time, onButton)
             eCalendar.show(manager, "CalendarView")
         }
 
         binding.dbsBtnAlarm.setOnClickListener {
-            val alarm = BottomSheetAlarm(task)
+            val alarm = AlarmDialog(task)
             alarm.show(parentFragmentManager, alarm.tag)
         }
     }
@@ -188,70 +188,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
     // TODO : Inner class로 호출 시 오류, 원인 알아보기(11/10)
     // TODO : 종료 날짜가 시작 날짜보다 멀어야 함.
-    class BottomSheetCalendar(sDate: String, type: String) : DialogFragment() {
 
-        val sDate = sDate
-        val type = type
-
-        private lateinit var dialogBinding: DialogCalendarBinding
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            dialogBinding = DialogCalendarBinding.inflate(inflater, container, false)
-            dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            return dialogBinding.root
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            val fm = SimpleDateFormat("yyyy-MM-dd")
-
-            dialogBinding.dialogDatePicker.state().edit()
-
-
-            // 날짜를 선택했을 때 나타나는 이벤트 리스너
-            // date -> CalendarDay(2021-10-23)
-            dialogBinding.dialogDatePicker.setOnDateChangedListener { widget, date, selected ->
-                // 0이 붙게 convert 한다.
-                var month =
-                    if(date.month + 1 < 10) {
-                        "0" + (date.month + 1).toString()
-                    } else {
-                        (date.month + 1).toString()
-                    }
-                var day =
-                    if(date.day < 10) {
-                        "0" + date.day.toString()
-                    } else {
-                        date.day.toString()
-                    }
-
-                var pickDate =
-                    date.year.toString() + "-$month-$day"
-                // 데이터베이스에 넣을 값
-                /*
-                    pickDate.toString -> 2021.10.23일인데 2021-9-23 으로 결과값이 나오는 것을 발견하였음.
-                    이유는, toString 으로 하면 Month가 배열로 취급받아서 index 값으로 나오기 때문임.
-                 */
-
-                var viewDate = "$month-$day"
-                // 뷰에 보여질 값
-
-                // FragmentResult
-                parentFragmentManager.setFragmentResult(
-                    "requestKey", bundleOf(
-                        "pickDate" to pickDate,
-                        "viewDate" to viewDate
-                    )
-                )
-                dismiss()
-            }
-        }
-    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -270,82 +207,6 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
             description = descriptionText
         }
         notificationManager.createNotificationChannel(channel)
-    }
-
-    // 알람 설정 다이얼로그
-    class BottomSheetAlarm(task: TaskEntity) : DialogFragment() {
-
-        private lateinit var binding: DialogDateandtimePickerBinding
-        private var task = task
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            binding = DialogDateandtimePickerBinding.inflate(inflater,container, false)
-            return binding.root
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            var pickAlarm : String = ""
-            var calendar = Calendar.getInstance()
-            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(requireContext(), AlarmReceiver::class.java)
-
-            // Date And Time Picker 설정
-            binding.dialogDateTimePicker.apply {
-                this.setDisplayMonthNumbers(false)
-                this.setDisplayYears(false)
-                this.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.gowundodum))
-                this.addOnDateChangedListener { displayed, date ->
-
-                    calendar.time = date
-
-                    // D/Pick Date ::: Fri Nov 19 16:50:00 GMT+09:00 2021
-                    val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    pickAlarm = fm.format(date)
-                    Log.d("Pick Date :: ", pickAlarm)
-                }
-            }
-
-            // 확인 버튼 눌렀을 때
-            binding.dialogDateTimePickerConfirmBtn.setOnClickListener {
-                // FragmentResult
-                parentFragmentManager.setFragmentResult(
-                    "alarmKey", bundleOf(
-                        "alarm" to pickAlarm
-                    )
-                )
-
-                var pendingRequestCode : Int = task.id!!
-
-                var pendingIntent = PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
-
-                alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY, pendingIntent
-                    )
-
-                Toast.makeText(context, "Alarm Test :: $pendingRequestCode, ${calendar.timeInMillis}" , Toast.LENGTH_LONG).show()
-
-                dismiss()
-            }
-
-            // 초기화 버튼 눌렀을 때
-            binding.dialogDateTimePickerInitBtn.setOnClickListener {
-
-                pickAlarm = ""
-                parentFragmentManager.setFragmentResult(
-                    "alarmKey", bundleOf(
-                        "alarm" to pickAlarm
-                    )
-                )
-                dismiss()
-            }
-
-        }
     }
 
     // 키보드가 올라오고 내려갈 때 동작하는 클래스
