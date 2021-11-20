@@ -30,6 +30,7 @@ import com.dongyang.android.pcheduler.databinding.DialogDateandtimePickerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.logging.Level.parse
 
 
 /**
@@ -87,7 +88,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
         var sTime = ""
         var eTime = ""
-        var pickAlarm = ""
+        var alarmView = ""
 
         // FragmentResult ( Fragment <-> Fragment 통신)
         parentFragmentManager.setFragmentResultListener("requestKey", this) { resultKey, bundle ->
@@ -108,9 +109,10 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
         // FragmentResult ( Fragment <-> Fragment 통신)
         parentFragmentManager.setFragmentResultListener("alarmKey", this) { resultKey, bundle ->
-            pickAlarm = bundle.getString("alarm")!!
-            task.alarm = pickAlarm
-            Log.d("alarm result ::", pickAlarm)
+            alarmView = bundle.getString("alarmView")!!
+
+            task.alarm = alarmView
+            Log.d("alarm result ::", alarmView)
         }
 
         // 시작 시간, 종료 시간이 널이 아니라면 버튼에 값 넣기
@@ -132,10 +134,60 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         binding.dbsEtContent.imeOptions = EditorInfo.IME_ACTION_DONE // EditText 완료 버튼 설정
         // 완료 버튼을 눌렀을 때 할 행동 설정
         binding.dbsEtContent.setOnEditorActionListener { textView, actionId, keyEvent ->
+
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // TODO : 완료 버튼을 눌렀을 때 데이터베이스 수정 일어나게 설정하기 (11/13) -> DONE
                 task.content = binding.dbsEtContent.text.toString()
                 updateTask(task)
+
+
+                var calendar = Calendar.getInstance()
+                val alarmManager =
+                    requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(requireContext(), AlarmReceiver::class.java)
+                intent.putExtra("content", task.content)
+                intent.putExtra("id", task.id)
+
+                // 알람을 설정했을 때만 알람매니저 설정
+
+                if (alarmView != "") {
+
+                    val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val alarmDate = fm.parse(alarmView)
+
+                    calendar.time = alarmDate
+
+                    var pendingRequestCode: Int = task.id!!
+
+                    var pendingIntent =
+                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
+
+                    alarmManager.setInexactRepeating(
+                        AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
+                        AlarmManager.INTERVAL_DAY, pendingIntent
+                    )
+
+                    Toast.makeText(
+                        context,
+                        "Alarm Test :: $pendingRequestCode",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else { // 알람 설정 안했을 때는 취소
+
+                    var pendingRequestCode: Int = task.id!!
+
+                    var pendingIntent =
+                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
+
+                    pendingIntent.cancel()
+
+                    Toast.makeText(
+                        context,
+                        "Alarm Test :: $pendingRequestCode, 초기화",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                }
 
                 Log.d("Update Test :: ", task.start_time + " + " + task.end_time)
                 Log.d("Update Test :: ", "(${task.alarm}")
@@ -188,7 +240,6 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
     // TODO : Inner class로 호출 시 오류, 원인 알아보기(11/10)
     // TODO : 종료 날짜가 시작 날짜보다 멀어야 함.
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-11-18
- * @Description :
+ * @Description : 알람 설정 브로드캐스트 리시버
  */
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -26,6 +26,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
 
+        val content = intent?.getStringExtra("content")
+        val requestCode = intent?.getIntExtra("id", 0);
+
         val intent = Intent(context, MainActivity::class.java)
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -35,11 +38,10 @@ class AlarmReceiver : BroadcastReceiver() {
             createNotificationChannel(notificationManager, context)
         }
 
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(context, requestCode!!, intent, PendingIntent.FLAG_ONE_SHOT)
         val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)
-            .setContentTitle("알람 테스트")
-            .setContentText("테스트 입니둥 ㅎㅎ")
+            .setContentTitle(content)
             .setAutoCancel(true) // 알림 클릭 시 알림 제거 여부
             .setContentIntent(pendingIntent)
             .build()

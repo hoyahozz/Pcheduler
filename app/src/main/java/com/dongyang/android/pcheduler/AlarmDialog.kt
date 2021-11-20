@@ -42,18 +42,15 @@ class AlarmDialog(task : TaskEntity) : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var pickAlarm : String = ""
-        var calendar = Calendar.getInstance()
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(requireContext(), AlarmReceiver::class.java)
 
+
+        // TODO : 현재 시간보다 더 빠른 시간은 설정 못하게 설정하기.
         // Date And Time Picker 설정
         binding.dialogDateTimePicker.apply {
             this.setDisplayMonthNumbers(false)
             this.setDisplayYears(false)
             this.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.gowundodum))
             this.addOnDateChangedListener { displayed, date ->
-
-                calendar.time = date
 
                 // D/Pick Date ::: Fri Nov 19 16:50:00 GMT+09:00 2021
                 val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -67,21 +64,9 @@ class AlarmDialog(task : TaskEntity) : DialogFragment() {
             // FragmentResult
             parentFragmentManager.setFragmentResult(
                 "alarmKey", bundleOf(
-                    "alarm" to pickAlarm
+                    "alarmView" to pickAlarm,
                 )
             )
-
-            var pendingRequestCode : Int = task.id!!
-
-            var pendingIntent = PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
-
-            alarmManager.setInexactRepeating(
-                AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                AlarmManager.INTERVAL_DAY, pendingIntent
-            )
-
-            Toast.makeText(context, "Alarm Test :: $pendingRequestCode, ${calendar.timeInMillis}" , Toast.LENGTH_LONG).show()
-
             dismiss()
         }
 
@@ -91,7 +76,7 @@ class AlarmDialog(task : TaskEntity) : DialogFragment() {
             pickAlarm = ""
             parentFragmentManager.setFragmentResult(
                 "alarmKey", bundleOf(
-                    "alarm" to pickAlarm
+                    "alarmView" to pickAlarm
                 )
             )
             dismiss()
