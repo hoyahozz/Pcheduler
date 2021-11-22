@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.Adapter.ListAdapter
+import com.dongyang.android.pcheduler.Adapter.ListChildAdapter
 import kotlin.math.max
 import kotlin.math.min
 
@@ -131,7 +131,7 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
 
     private fun getView(viewHolder: RecyclerView.ViewHolder) : View {
-        return (viewHolder as ListAdapter.MainViewHolder).taskContainer
+        return (viewHolder as ListChildAdapter.MainViewHolder).taskContainer
     }
 
     // isClamped 를 View의 Tag로 관리한다.

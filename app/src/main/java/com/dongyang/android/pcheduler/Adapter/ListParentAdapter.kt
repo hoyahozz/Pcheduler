@@ -2,13 +2,9 @@ package com.dongyang.android.pcheduler.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Rect
 import android.os.AsyncTask
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.DeleteListener
+import com.dongyang.android.pcheduler.ListViewModel
 import com.dongyang.android.pcheduler.SwipeHelperCallback
 import com.dongyang.android.pcheduler.database.ListDatabase
 import com.dongyang.android.pcheduler.database.TaskEntity
@@ -28,17 +25,17 @@ import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
  */
 
 class ListParentAdapter(
-    var context: Context,
-    var list: List<String>,
-    var onDeleteListener: DeleteListener,
-    val db: ListDatabase
+    val context: Context,
+    private val listViewModel: ListViewModel
 ) : RecyclerView.Adapter<ListParentAdapter.ListParentViewHolder>() {
+
+    private var parentList = emptyList<String>()
 
 //    var childTask = listOf<TaskEntity>()
 //    var childList = mutableListOf<List<TaskEntity>>()
 
     override fun getItemCount(): Int {
-        return list.size
+        return parentList.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListParentViewHolder {
@@ -49,7 +46,7 @@ class ListParentAdapter(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ListParentViewHolder, position: Int) {
-        val parentDate = list[position]
+        val parentDate = parentList[position]
 
         Log.d("ParentDate :: ", parentDate)
 
@@ -64,17 +61,17 @@ class ListParentAdapter(
         val itemTouchHelper = ItemTouchHelper(swipeHelperCallback)
         itemTouchHelper.attachToRecyclerView(holder.child)
 
-        holder.child.apply {
-            this.addItemDecoration(divideItemDecoration)
-            this.layoutManager = LinearLayoutManager(context)
-            // this.addItemDecoration(RecyclerViewDecoration(20))
-            this.setOnTouchListener { _, _ ->
-                swipeHelperCallback.removePreviousClamp(this)
-                false
-            }
-        }
-
-        getTask(holder.child, parentDate, context, holder.root)
+//        holder.child.apply {
+//            this.addItemDecoration(divideItemDecoration)
+//            this.layoutManager = LinearLayoutManager(context)
+//            // this.addItemDecoration(RecyclerViewDecoration(20))
+//            this.setOnTouchListener { _, _ ->
+//                swipeHelperCallback.removePreviousClamp(this)
+//                false
+//            }
+//        }
+//
+//        getTask(holder.child, parentDate, context, holder.root)
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -82,8 +79,8 @@ class ListParentAdapter(
         var getTask = object : AsyncTask<Unit, List<TaskEntity>, Unit>() {
 
             override fun doInBackground(vararg p0: Unit?) {
-                var childTask = db.listDAO().getChildTask(date)
-                publishProgress(childTask)
+                var childTask = listViewModel.readChildData(date)
+                // publishProgress(childTask)
 
 
                 // setRecyclerView(...) -> Background 단계에서 RecyclerView 설정 X
@@ -127,7 +124,7 @@ class ListParentAdapter(
     }
 
     fun setRecyclerView(task: List<TaskEntity>, recyclerView: RecyclerView, context: Context) {
-        recyclerView.adapter = ListAdapter(context, task, onDeleteListener, db)
+        recyclerView.adapter = ListChildAdapter(listViewModel, context)
     }
 
 
@@ -137,6 +134,11 @@ class ListParentAdapter(
         var child = binding.itemParentRv
         var container = binding.itemParentContainer
         var root = binding.root
+    }
+
+    fun setParent(task : List<String>) {
+        parentList = task
+        notifyDataSetChanged()
     }
 
 

@@ -1,5 +1,6 @@
 package com.dongyang.android.pcheduler.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 /**
@@ -33,7 +34,7 @@ interface ListDAO {
     fun updateTask(task: TaskEntity)
 
     @Query("SELECT DISTINCT start_time FROM task ORDER BY start_time ASC")
-    fun getTaskDate() : List<String>
+    fun getParentTask() : LiveData<List<String>>
 
     @Query("SELECT * FROM TASK WHERE start_time = :start_time")
     fun getChildTask(start_time : String) : List<TaskEntity>

@@ -9,17 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.DeleteListener
-import com.dongyang.android.pcheduler.DetailBottomSheet
-import com.dongyang.android.pcheduler.R
-import com.dongyang.android.pcheduler.TabDialog
-import com.dongyang.android.pcheduler.database.ListDatabase
+import com.dongyang.android.pcheduler.*
 import com.dongyang.android.pcheduler.database.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListBinding
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
 /**
@@ -28,18 +22,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
  * @Description : 중첩 리사이클러뷰의 자식, 할 일의 구체적 내용을 담고 있음.
  */
 
-class ListAdapter(
-    val context: Context,
-    var list: List<TaskEntity>,
-    var onDeleteListener: DeleteListener,
-    val db: ListDatabase
-) : RecyclerView.Adapter<ListAdapter.MainViewHolder>(){
+class ListChildAdapter(private val listViewModel: ListViewModel, val context : Context
+) : RecyclerView.Adapter<ListChildAdapter.MainViewHolder>(){
 
-
+    private var childList = emptyList<TaskEntity>()
 
 
     override fun getItemCount(): Int {
-        return list.size
+        return childList.size
     }
 
 
@@ -47,18 +37,16 @@ class ListAdapter(
 //        val itemView = LayoutInflater.from(context).inflate(R.layout.item_list, parent, false)
 //        return MainViewHolder(itemView)
 
-        val binding = ItemListBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = ItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MainViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        val task = list[position]
-
-
+        val task = childList[position]
 
         holder.taskText.text = task.content
         holder.taskDelete.setOnClickListener {
-            onDeleteListener.onDeleteListener(task)
+            deleteTask(task)
         }
 
         // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수
@@ -102,11 +90,28 @@ class ListAdapter(
     }
 
     @SuppressLint("StaticFieldLeak")
+    fun deleteTask(task: TaskEntity) {
+        val deleteTask = object : AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg p0: Unit?) {
+                // WorkerThread 에서 어떤 일을 할지 정의한다.
+                listViewModel.deleteTask(task)
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
+                super.onPostExecute(result)
+            }
+
+        }
+        deleteTask.execute()
+    }
+
+    @SuppressLint("StaticFieldLeak")
     fun updateTask(task: TaskEntity) {
         val updateTask = object : AsyncTask<Unit, Unit, Unit>() {
             override fun doInBackground(vararg p0: Unit?) {
                 // WorkerThread 에서 어떤 일을 할지 정의한다.
-                db.listDAO().updateTask(task)
+                listViewModel.updateTask(task)
             }
 
             override fun onPostExecute(result: Unit?) {
