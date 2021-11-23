@@ -1,7 +1,8 @@
-package com.dongyang.android.pcheduler.database
+package com.dongyang.android.pcheduler.Database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.dongyang.android.pcheduler.Model.TaskEntity
 
 /**
  * @Author : Jeong Ho Kim
@@ -25,7 +26,7 @@ interface ListDAO {
     fun insertTask(task : TaskEntity)
 
     @Query("SELECT * FROM task")
-    fun getTask() : List<TaskEntity>
+    fun getAllTask() : LiveData<List<TaskEntity>>
 
     @Delete
     fun deleteTask(task : TaskEntity)
@@ -38,5 +39,8 @@ interface ListDAO {
 
     @Query("SELECT * FROM TASK WHERE start_time = :start_time")
     fun getChildTask(start_time : String) : List<TaskEntity>
+
+    @Query("SELECT * FROM TASK WHERE start_time = :start_time")
+    fun getDateTask(start_time : String) : List<TaskEntity>
 
 }

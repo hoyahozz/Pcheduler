@@ -1,22 +1,16 @@
 package com.dongyang.android.pcheduler
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.databinding.DialogDateandtimePickerBinding
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * @Author : Jeong Ho Kim

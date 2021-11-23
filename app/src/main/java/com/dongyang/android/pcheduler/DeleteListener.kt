@@ -1,6 +1,6 @@
 package com.dongyang.android.pcheduler
 
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.Model.TaskEntity
 
 /**
  * @Author : Jeong Ho Kim

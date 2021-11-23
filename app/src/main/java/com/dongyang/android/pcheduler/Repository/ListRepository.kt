@@ -1,8 +1,8 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.Repository
 
 import androidx.lifecycle.LiveData
-import com.dongyang.android.pcheduler.database.ListDAO
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.Database.ListDAO
+import com.dongyang.android.pcheduler.Model.TaskEntity
 
 /**
  * @Author : Jeong Ho Kim
@@ -11,11 +11,9 @@ import com.dongyang.android.pcheduler.database.TaskEntity
  */
 
 class ListRepository(private val listDAO : ListDAO) {
+    val readAllData : LiveData<List<TaskEntity>> = listDAO.getAllTask()
     val readParentData : LiveData<List<String>> = listDAO.getParentTask()
 
-    fun readChildData(start_time : String) : List<TaskEntity> {
-        return listDAO.getChildTask(start_time)
-    }
 
     fun insertTask(task : TaskEntity) {
         listDAO.insertTask(task)
@@ -27,5 +25,13 @@ class ListRepository(private val listDAO : ListDAO) {
 
     fun updateTask(task : TaskEntity) {
         listDAO.updateTask(task)
+    }
+
+    fun readChildData(start_time : String) : List<TaskEntity> {
+        return listDAO.getChildTask(start_time)
+    }
+
+    fun readDateTask(start_time : String) : List<TaskEntity> {
+        return listDAO.getChildTask(start_time)
     }
 }

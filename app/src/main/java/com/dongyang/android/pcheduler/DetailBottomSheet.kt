@@ -2,12 +2,9 @@ package com.dongyang.android.pcheduler
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.app.ProgressDialog.show
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
@@ -19,18 +16,13 @@ import android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.dongyang.android.pcheduler.database.ListDatabase
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.Database.ListDatabase
+import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.databinding.BottomsheetDetailBinding
-import com.dongyang.android.pcheduler.databinding.DialogCalendarBinding
-import com.dongyang.android.pcheduler.databinding.DialogDateandtimePickerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.Level.parse
 
 
 /**

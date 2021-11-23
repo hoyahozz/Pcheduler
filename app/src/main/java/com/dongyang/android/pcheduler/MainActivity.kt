@@ -3,24 +3,11 @@
 package com.dongyang.android.pcheduler
 
 import android.annotation.SuppressLint
-import android.graphics.Rect
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.LEFT
-import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.database.ListDatabase
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.IllegalArgumentException
 
 @SuppressLint("StaticFieldLeak")
 class MainActivity : AppCompatActivity() {

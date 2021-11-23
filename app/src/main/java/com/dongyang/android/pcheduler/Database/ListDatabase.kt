@@ -1,11 +1,11 @@
-package com.dongyang.android.pcheduler.database
+package com.dongyang.android.pcheduler.Database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import java.util.concurrent.Executors
+import com.dongyang.android.pcheduler.Model.TaskEntity
 
 /**
  * @Author : Jeong Ho Kim

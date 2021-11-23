@@ -1,4 +1,4 @@
-package com.dongyang.android.pcheduler.database
+package com.dongyang.android.pcheduler.Model
 
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo

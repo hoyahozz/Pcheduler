@@ -4,21 +4,18 @@ import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.Adapter.ListParentAdapter
-import com.dongyang.android.pcheduler.database.ListDatabase
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.ViewModel.ListViewModel
+import com.dongyang.android.pcheduler.Database.ListDatabase
+import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,7 +29,6 @@ import java.util.*
 @SuppressLint("StaticFieldLeak")
 class ListFragment : Fragment() {
 
-    var taskDateList = listOf<String>()
     lateinit var db : ListDatabase // 데이터베이스
     private var _binding : FragmentListBinding? = null // 뷰 바인딩
     // _를 붙이는 이유 : private 한 변수는 관례상 prefix 를 붙이는 경우가 많다.
@@ -40,12 +36,10 @@ class ListFragment : Fragment() {
     // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
 
     private val listViewModel : ListViewModel by viewModels() // 뷰모델 연결
-    private val parentAdapter : ListParentAdapter by lazy { ListParentAdapter(requireContext(), listViewModel)}
+    private val parentAdapter : ListParentAdapter by lazy { ListParentAdapter(requireContext(), listViewModel, viewLifecycleOwner)}
 
 
     var today = ""
-
-
 
     /*
          lateinit -> 전역변수 선언 후 null 값을 지정하지 않고 초기화
@@ -65,8 +59,6 @@ class ListFragment : Fragment() {
         // View Binding -> FindViewById 없이 View에서 바로 사용할 수 있게 해줌.
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val view = binding.root
-
-
 
         // Context -> Fragment 에서는 requireContext() 를 사용한다.
         db = ListDatabase.getInstance(requireContext())!! // NOT NULL
@@ -90,10 +82,6 @@ class ListFragment : Fragment() {
             this.addItemDecoration(RecyclerViewDecoration(30))
             this.adapter = parentAdapter
         }
-
-//        listViewModel.currentData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-//
-//        })
 
         // 현재 날짜 데이터 리스트(currentData) 관찰하여 변경시 어댑터에 전달해줌
         listViewModel.readParentData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -123,8 +111,6 @@ class ListFragment : Fragment() {
 
                 binding.listEdtTask.setText("")
             }
-
-
         }
     }
 

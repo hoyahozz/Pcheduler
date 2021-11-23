@@ -12,7 +12,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.*
-import com.dongyang.android.pcheduler.database.TaskEntity
+import com.dongyang.android.pcheduler.ViewModel.ListViewModel
+import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListBinding
 
 
@@ -22,8 +23,10 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
  * @Description : 중첩 리사이클러뷰의 자식, 할 일의 구체적 내용을 담고 있음.
  */
 
-class ListChildAdapter(private val listViewModel: ListViewModel, val context : Context
-) : RecyclerView.Adapter<ListChildAdapter.MainViewHolder>(){
+class ListChildAdapter(
+    val context: Context,
+    private val listViewModel: ListViewModel
+) : RecyclerView.Adapter<ListChildAdapter.MainViewHolder>() {
 
     private var childList = emptyList<TaskEntity>()
 
@@ -66,13 +69,13 @@ class ListChildAdapter(private val listViewModel: ListViewModel, val context : C
             bottomSheet.show(manager, bottomSheet.tag)
         }
 
-        if(task.end_time != "") {
+        if (task.end_time != "") {
             val taskET = "~ " + task.end_time.substring(5, task.end_time.length)
             holder.taskEndTime.text = taskET
             holder.taskEndTime.visibility = View.VISIBLE
         }
 
-        if(task.alarm != "") {
+        if (task.alarm != "") {
             holder.taskImage.setImageResource(R.drawable.ic_alarm_on)
         }
     }
@@ -136,5 +139,10 @@ class ListChildAdapter(private val listViewModel: ListViewModel, val context : C
                 updateTask(task)
             }
         }
+    }
+
+    fun setChild(task: List<TaskEntity>) {
+        childList = task
+        notifyDataSetChanged()
     }
 }
