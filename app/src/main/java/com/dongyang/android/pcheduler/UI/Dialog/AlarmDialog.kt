@@ -1,4 +1,4 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.UI.Dialog
 
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +9,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.dongyang.android.pcheduler.Model.TaskEntity
+import com.dongyang.android.pcheduler.R
 import com.dongyang.android.pcheduler.databinding.DialogDateandtimePickerBinding
 import java.text.SimpleDateFormat
 

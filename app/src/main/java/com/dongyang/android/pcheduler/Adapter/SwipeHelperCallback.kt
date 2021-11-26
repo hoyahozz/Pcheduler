@@ -1,10 +1,9 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.Adapter
 
 import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.dongyang.android.pcheduler.Adapter.ListChildAdapter
 import kotlin.math.max
 import kotlin.math.min
 

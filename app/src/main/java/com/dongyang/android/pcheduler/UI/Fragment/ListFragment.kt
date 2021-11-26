@@ -1,4 +1,4 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.UI.Fragment
 
 import android.annotation.SuppressLint
 import android.graphics.Rect

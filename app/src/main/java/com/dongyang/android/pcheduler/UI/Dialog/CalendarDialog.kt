@@ -1,4 +1,4 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.UI.Dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

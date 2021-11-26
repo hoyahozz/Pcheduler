@@ -30,8 +30,4 @@ class ListRepository(private val listDAO : ListDAO) {
     fun readChildData(start_time : String) : List<TaskEntity> {
         return listDAO.getChildTask(start_time)
     }
-
-    fun readDateTask(start_time : String) : List<TaskEntity> {
-        return listDAO.getChildTask(start_time)
-    }
 }

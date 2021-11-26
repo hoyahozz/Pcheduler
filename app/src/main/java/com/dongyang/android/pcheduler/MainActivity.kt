@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.dongyang.android.pcheduler.Database.ListDatabase
+import com.dongyang.android.pcheduler.UI.Fragment.CalFragment
+import com.dongyang.android.pcheduler.UI.Fragment.ListFragment
 import com.dongyang.android.pcheduler.databinding.ActivityMainBinding
 
 @SuppressLint("StaticFieldLeak")

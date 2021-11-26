@@ -1,4 +1,4 @@
-package com.dongyang.android.pcheduler
+package com.dongyang.android.pcheduler.UI.Dialog
 
 import android.annotation.SuppressLint
 import android.app.*
@@ -17,8 +17,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.dongyang.android.pcheduler.AlarmReceiver
 import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
+import com.dongyang.android.pcheduler.R
 import com.dongyang.android.pcheduler.databinding.BottomsheetDetailBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.SimpleDateFormat

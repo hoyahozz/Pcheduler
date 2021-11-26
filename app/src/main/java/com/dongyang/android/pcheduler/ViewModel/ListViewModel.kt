@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dongyang.android.pcheduler.Repository.ListRepository
 import com.dongyang.android.pcheduler.Database.ListDatabase
+import com.dongyang.android.pcheduler.Model.Task
 import com.dongyang.android.pcheduler.Model.TaskEntity
 
 /**
@@ -19,7 +20,9 @@ class ListViewModel(application : Application) : AndroidViewModel(application){
 
     val readAllData : LiveData<List<TaskEntity>>
     val readParentData : LiveData<List<String>>
+    var readChildData : LiveData<List<TaskEntity>>? = null
     private val repository : ListRepository
+
 
     // getter, setter
     private val _currentData = MutableLiveData<List<TaskEntity>>()
@@ -46,9 +49,10 @@ class ListViewModel(application : Application) : AndroidViewModel(application){
         repository.deleteTask(task)
     }
 
-    fun getChildTask(start_time : String) {
-        var tmp = repository.readChildData(start_time)
+    fun getChildTask(start_time : String) : List<TaskEntity> {
+        val tmp = repository.readChildData(start_time)
         _currentData.postValue(tmp)
+        return tmp
     }
 
 }

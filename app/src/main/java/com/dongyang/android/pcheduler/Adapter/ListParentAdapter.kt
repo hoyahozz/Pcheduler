@@ -6,15 +6,12 @@ import android.os.AsyncTask
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
-import com.dongyang.android.pcheduler.SwipeHelperCallback
 import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
 
@@ -31,7 +28,7 @@ class ListParentAdapter(
 ) : RecyclerView.Adapter<ListParentAdapter.ListParentViewHolder>() {
 
     private var parentList = emptyList<String>()
-
+    var testList = emptyList<TaskEntity>()
 //    var childTask = listOf<TaskEntity>()
 //    var childList = mutableListOf<List<TaskEntity>>()
 
@@ -49,6 +46,7 @@ class ListParentAdapter(
     override fun onBindViewHolder(holder: ListParentViewHolder, position: Int) {
         val parentDate = parentList[position]
         val childAdapter: ListChildAdapter by lazy { ListChildAdapter(context, listViewModel) }
+
 
         Log.d("ParentDate :: ", parentDate)
 
@@ -75,13 +73,11 @@ class ListParentAdapter(
             this.adapter = childAdapter
         }
 
-//        listViewModel.readAllData.observe(lifecycleOwner, Observer {
-//            childAdapter.setChild(it.get(3).)
-//        })
+        test(parentDate, childAdapter)
 
-//        listViewModel.currentData.observe(lifecycleOwner, androidx.lifecycle.Observer {
-//            childAdapter.setChild(it)
-//        })
+//        listViewModel.readAllData.observe(lifecycleOwner) {
+//            test(parentDate, childAdapter)
+//        }
 
 
 //
@@ -142,15 +138,21 @@ class ListParentAdapter(
 //    }
 
     @SuppressLint("StaticFieldLeak")
-    fun test(parentDate: String) {
+    fun test(parentDate: String, childAdapter: ListChildAdapter) {
+        var testData : List<TaskEntity>? = null
         val childTask =
             object : AsyncTask<Unit, Unit, Unit>() {
                 override fun doInBackground(vararg p0: Unit?) {
-                    listViewModel.getChildTask(parentDate)
+                    testData = listViewModel.getChildTask(parentDate)
+                }
+
+                override fun onProgressUpdate(vararg values: Unit?) {
+                    super.onProgressUpdate(*values)
                 }
 
                 override fun onPostExecute(result: Unit?) {
                     super.onPostExecute(result)
+                    testData?.let { childAdapter.setChild(it) }
                 }
 
             }

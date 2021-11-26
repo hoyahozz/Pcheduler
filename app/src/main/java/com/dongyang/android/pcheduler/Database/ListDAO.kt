@@ -40,7 +40,4 @@ interface ListDAO {
     @Query("SELECT * FROM TASK WHERE start_time = :start_time")
     fun getChildTask(start_time : String) : List<TaskEntity>
 
-    @Query("SELECT * FROM TASK WHERE start_time = :start_time")
-    fun getDateTask(start_time : String) : List<TaskEntity>
-
 }
