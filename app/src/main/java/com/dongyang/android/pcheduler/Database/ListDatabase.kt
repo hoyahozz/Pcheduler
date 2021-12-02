@@ -44,6 +44,7 @@ abstract class ListDatabase : RoomDatabase() {
                             }
                         })
                         .fallbackToDestructiveMigration() // 업데이트시 모든 데이터를 드랍한다.
+                        .allowMainThreadQueries()
                         .build()
                 }
             }

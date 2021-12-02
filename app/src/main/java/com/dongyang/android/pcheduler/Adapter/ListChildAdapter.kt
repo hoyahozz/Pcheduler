@@ -26,10 +26,11 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
 
 class ListChildAdapter(
     val context: Context,
-    private val listViewModel: ListViewModel
+    private val listViewModel: ListViewModel,
+    var childList : List<TaskEntity>
 ) : RecyclerView.Adapter<ListChildAdapter.MainViewHolder>() {
 
-    private var childList = emptyList<TaskEntity>()
+//    private var childList = emptyList<TaskEntity>()
 
 
     override fun getItemCount(): Int {
@@ -142,8 +143,8 @@ class ListChildAdapter(
         }
     }
 
-    fun setChild(task: List<TaskEntity>) {
-        childList = task
-        notifyDataSetChanged()
-    }
+//    fun setChild(task: List<TaskEntity>) {
+//        childList = task
+//        notifyDataSetChanged()
+//    }
 }

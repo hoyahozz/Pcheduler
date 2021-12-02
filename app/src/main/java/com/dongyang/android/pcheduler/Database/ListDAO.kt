@@ -25,8 +25,11 @@ interface ListDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(task : TaskEntity)
 
-    @Query("SELECT * FROM task")
-    fun getAllTask() : LiveData<List<TaskEntity>>
+//    @Query("SELECT * FROM task")
+//    fun getAllTask() : LiveData<List<TaskEntity>>
+
+    @Query("SELECT * FROM task ORDER BY start_time DESC")
+    fun getAllTask() : List<TaskEntity>
 
     @Delete
     fun deleteTask(task : TaskEntity)
@@ -36,6 +39,9 @@ interface ListDAO {
 
     @Query("SELECT DISTINCT start_time FROM task ORDER BY start_time ASC")
     fun getParentTask() : LiveData<List<String>>
+
+    @Query("SELECT DISTINCT start_time FROM task ORDER BY start_time ASC")
+    fun getParentDate() : List<String>
 
     @Query("SELECT * FROM TASK WHERE start_time = :start_time")
     fun getChildTask(start_time : String) : List<TaskEntity>
