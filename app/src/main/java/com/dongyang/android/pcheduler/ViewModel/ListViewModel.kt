@@ -20,6 +20,8 @@ class ListViewModel() : ViewModel() {
 
     val readParentData: LiveData<List<String>>
     val parentData: List<String>
+    val readAllTask : LiveData<List<TaskEntity>>
+
     private val repository: ListRepository
 
     // 초기값 설정
@@ -28,15 +30,15 @@ class ListViewModel() : ViewModel() {
         repository = ListRepository(listDAO)
         readParentData = repository.readParentData
         parentData = repository.readParentDate
+        readAllTask = repository.readAllData
     }
 
     private val taskLiveData = MutableLiveData<List<TaskItem>>()
     val tasks: LiveData<List<TaskItem>> get() = taskLiveData
 
-    fun fetchTasks() {
+    fun fetchTasks(task : List<TaskEntity>) {
         viewModelScope.launch {
-            Log.d("task Test :::" , "viewmodel OK")
-            val listItems = repository.readAllData.toListItems()
+            val listItems = task.toListItems()
             taskLiveData.postValue(listItems)
         }
     }
@@ -62,11 +64,16 @@ class ListViewModel() : ViewModel() {
     }
 
     fun updateTask(task: TaskEntity) {
-        repository.updateTask(task)
+        viewModelScope.launch {
+            repository.updateTask(task)
+        }
     }
 
     fun deleteTask(task: TaskEntity) {
-        repository.deleteTask(task)
+        viewModelScope.launch {
+            repository.deleteTask(task)
+        }
+
     }
 
     fun getChildTask(start_time: String): List<TaskEntity> {

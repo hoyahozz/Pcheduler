@@ -14,7 +14,7 @@ import com.dongyang.android.pcheduler.Model.TaskEntity
 class ListRepository(private val listDAO : ListDAO) {
 
 //    val readAllData : LiveData<List<TaskEntity>> = listDAO.getAllTask()
-    val readAllData : List<TaskEntity> = listDAO.getAllTask()
+    val readAllData : LiveData<List<TaskEntity>> = listDAO.getAllTask()
     val readParentData : LiveData<List<String>> = listDAO.getParentTask()
     val readParentDate : List<String> = listDAO.getParentDate()
 

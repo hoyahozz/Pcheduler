@@ -25,11 +25,11 @@ interface ListDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(task : TaskEntity)
 
-//    @Query("SELECT * FROM task")
-//    fun getAllTask() : LiveData<List<TaskEntity>>
-
     @Query("SELECT * FROM task ORDER BY start_time DESC")
-    fun getAllTask() : List<TaskEntity>
+    fun getAllTask() : LiveData<List<TaskEntity>>
+
+//    @Query("SELECT * FROM task ORDER BY start_time DESC")
+//    fun getAllTask() : List<TaskEntity>
 
     @Delete
     fun deleteTask(task : TaskEntity)

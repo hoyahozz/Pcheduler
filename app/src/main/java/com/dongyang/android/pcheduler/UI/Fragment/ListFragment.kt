@@ -46,7 +46,7 @@ class ListFragment : Fragment() {
     private val listViewModel : ListViewModel by viewModels()
 
     private val taskAdapter by lazy {
-        TaskAdapter()
+        TaskAdapter(requireContext(),listViewModel)
     }
 
 
@@ -73,13 +73,6 @@ class ListFragment : Fragment() {
         var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
         today = timeFormat.format(Date(currentTime))
 
-        // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
-        binding.listRcview.apply {
-            // this.addItemDecoration(dividerItemDecoration)
-            this.adapter = taskAdapter
-            this.layoutManager = LinearLayoutManager(requireContext())
-//            this.addItemDecoration(RecyclerViewDecoration(10))
-        }
         return view
     }
 
@@ -115,10 +108,20 @@ class ListFragment : Fragment() {
         }
 */
 
-        listViewModel.fetchTasks()
+        // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
+        binding.listRcview.apply {
+            // this.addItemDecoration(dividerItemDecoration)
+            this.adapter = taskAdapter
+            this.layoutManager = LinearLayoutManager(requireContext())
+//            this.addItemDecoration(RecyclerViewDecoration(10))
+        }
+
+        listViewModel.readAllTask.observe(viewLifecycleOwner) {
+            Log.d("task test", "reall All task observing")
+            listViewModel.fetchTasks(it)
+        }
 
         listViewModel.tasks.observe(viewLifecycleOwner) {
-            Log.d("task Test ::" , "OK")
             taskAdapter.submitList(it)
         }
 
@@ -140,13 +143,6 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
-//    // RecyclerView 설정
-//    fun setRecyclerView(taskDateList : List<String>) {
-//        binding.listRcview.adapter = ListParentAdapter(requireContext(), taskDateList, this, db)
-//    }
-
 
     // TODO : AsyncTask -> Coroutine 변환 (10/24 김정호)
 
@@ -174,15 +170,6 @@ class ListFragment : Fragment() {
 
     }
 
-    fun fetchTask() {
-
-        val fetchTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                listViewModel.fetchTasks()
-            }
-        }
-        fetchTask.execute()
-    }
 
     // 리사이클러뷰 간격 조정
     inner class RecyclerViewDecoration(private val height: Int) : RecyclerView.ItemDecoration() {
