@@ -33,8 +33,8 @@ class ListViewModel() : ViewModel() {
         readAllTask = repository.readAllData
     }
 
-    private val taskLiveData = MutableLiveData<List<TaskItem>>()
-    val tasks: LiveData<List<TaskItem>> get() = taskLiveData
+    private val taskLiveData = MutableLiveData<List<TaskItem>>() // 변화가능한 라이브데이터
+    val tasks: LiveData<List<TaskItem>> get() = taskLiveData // getter
 
     fun fetchTasks(task : List<TaskEntity>) {
         viewModelScope.launch {
@@ -43,11 +43,11 @@ class ListViewModel() : ViewModel() {
         }
     }
 
-    private fun List<TaskEntity>.toListItems(): List<TaskItem> {
+    private fun List<TaskEntity>.toListItems(): List<TaskItem> { // Kotlin extension
+        // 부모 날짜별로 데이터를 정리
         val result = arrayListOf<TaskItem>()
         var groupParentDate = ""
         this.forEach { task ->
-            Log.d("task Test :::", "date :: $groupParentDate")
             if (groupParentDate != task.start_time) {
                 result.add(TaskItem.Parent(task))
             }

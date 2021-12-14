@@ -170,6 +170,8 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
                     var pendingRequestCode: Int = task.id!!
 
+                    // java.lang.IllegalArgumentException: com.dongyang.android.pcheduler:
+                    // Targeting S+ (version 31 and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE be specified when creating a PendingIntent.
                     var pendingIntent =
                         PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
 

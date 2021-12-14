@@ -33,7 +33,6 @@ import java.util.*
  * @Description : 유저의 할일을 목록으로 볼 수 있는 화면
  */
 
-@SuppressLint("StaticFieldLeak")
 class ListFragment : Fragment() {
 
     lateinit var db: ListDatabase // 데이터베이스
@@ -44,12 +43,9 @@ class ListFragment : Fragment() {
     // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
 
     private val listViewModel : ListViewModel by viewModels()
-
     private val taskAdapter by lazy {
         TaskAdapter(requireContext(),listViewModel)
     }
-
-
     var today = ""
 
     /*
@@ -68,7 +64,6 @@ class ListFragment : Fragment() {
         // Context -> Fragment 에서는 requireContext() 를 사용한다.
         db = ListDatabase.getInstance(requireContext())!! // NOT NULL
 
-
         var currentTime: Long = System.currentTimeMillis()
         var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
         today = timeFormat.format(Date(currentTime))
@@ -79,24 +74,6 @@ class ListFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility", "SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // TODO : 클릭 시 오늘의 날짜 설정하게 변경하기(11/06)
-//        var currentTime: Long = System.currentTimeMillis()
-//        var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
-//        today = timeFormat.format(Date(currentTime))
-//
-//        // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
-//        binding.listRcview.apply {
-//            // this.addItemDecoration(dividerItemDecoration)
-//            this.adapter = taskAdapter
-//            this.layoutManager = LinearLayoutManager(requireContext())
-//            this.addItemDecoration(RecyclerViewDecoration(30))
-//        }
-//
-//        fetchTask()
-//        listViewModel.tasks.observe(viewLifecycleOwner) {
-//            subTask(it)
-//        }
 
         // TODO : 해당 날짜로 스크롤 내려가게 설정하기 (11/06)
 /*
@@ -116,9 +93,9 @@ class ListFragment : Fragment() {
 //            this.addItemDecoration(RecyclerViewDecoration(10))
         }
 
-        listViewModel.readAllTask.observe(viewLifecycleOwner) {
-            Log.d("task test", "reall All task observing")
-            listViewModel.fetchTasks(it)
+        listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면
+            Log.d("task test", "real All task observing")
+             listViewModel.fetchTasks(it)
         }
 
         listViewModel.tasks.observe(viewLifecycleOwner) {
@@ -143,33 +120,6 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    // TODO : AsyncTask -> Coroutine 변환 (10/24 김정호)
-
-    /**
-     * 안드로이드에서는 Lint를 통해 성능상 문제가 있을 수 있는 코드를 관리한다.
-     * 밑의 코드에서는 AsyncTask 때문에 메모리 누수가 일어날 수 있는데, SuppressLint 를 통해 경고를 무시할 수 있다.
-     */
-
-    fun insertTask(task: TaskEntity) {
-
-        val getInsertTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                listViewModel.insertTask(task)
-            }
-
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-            }
-
-        }
-        getInsertTask.execute()
-
-    }
-
 
     // 리사이클러뷰 간격 조정
     inner class RecyclerViewDecoration(private val height: Int) : RecyclerView.ItemDecoration() {

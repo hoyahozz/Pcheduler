@@ -50,7 +50,7 @@ class TaskChildHolder(
             checkTask(task, taskCheck, taskText)
 
             // 리스트 불러올 때 취소선 및 체크박스 상태 설정
-            this.itemListCheckBox.isChecked = task.complete == "OK"
+            taskCheck.isChecked = task.complete == "OK"
             taskText.paintFlags = when (task.complete) {
                 "OK" -> Paint.STRIKE_THRU_TEXT_FLAG
                 else -> 0
@@ -72,16 +72,14 @@ class TaskChildHolder(
             if (task.alarm != "") {
                 taskImage.setImageResource(R.drawable.ic_alarm_on)
             }
-
-
-
         }
     }
 
     // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수
     private fun checkTask(task: TaskEntity, cb: CheckBox, tv: TextView) {
-        cb.setOnCheckedChangeListener { button, ischecked ->
-            if (ischecked) {
+
+        cb.setOnClickListener {
+            if (cb.isChecked) {
                 task.complete = "OK"
                 tv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 listViewModel.updateTask(task)

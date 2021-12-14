@@ -28,7 +28,7 @@ class TaskAdapter(
     private val listViewModel = listViewModel
     private val context = context
 
-    fun submitList(items: List<TaskItem>) {
+    fun submitList(items: List<TaskItem>) { // 기존에 있던 데이터를 지우고 다시 데이터를 수정
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -61,8 +61,3 @@ class TaskAdapter(
         abstract fun bind(item: TaskItem)
     }
 }
-
-
-
-
-

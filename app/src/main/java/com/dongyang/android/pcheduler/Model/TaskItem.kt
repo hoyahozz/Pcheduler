@@ -12,17 +12,15 @@ sealed class TaskItem {
     abstract val task: TaskEntity
     abstract val layoutId: Int
 
-    data class Parent(
+    data class Parent( // 날짜
         override val task: TaskEntity,
         override val layoutId: Int = VIEW_TYPE
     ) : TaskItem() {
-
         companion object {
             const val VIEW_TYPE = R.layout.item_list_parent
         }
     }
-
-    data class Child(
+    data class Child( // 아이템
         override val task: TaskEntity,
         override val layoutId: Int = VIEW_TYPE
     ) : TaskItem() {
