@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class ListViewModel() : ViewModel() {
 
     val readParentData: LiveData<List<String>>
-    val parentData: List<String>
+    // val parentData: List<String>
     val readAllTask : LiveData<List<TaskEntity>>
 
     private val repository: ListRepository
@@ -29,7 +29,7 @@ class ListViewModel() : ViewModel() {
         val listDAO = ListDatabase.INSTANCE!!.listDAO()
         repository = ListRepository(listDAO)
         readParentData = repository.readParentData
-        parentData = repository.readParentDate
+        // parentData = repository.readParentDate
         readAllTask = repository.readAllData
     }
 

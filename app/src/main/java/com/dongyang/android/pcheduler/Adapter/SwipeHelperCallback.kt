@@ -11,14 +11,8 @@ import kotlin.math.min
  * @Author : Jeong Ho Kim
  * @Created : 2021-11-02
  * @Description : 리사이클러뷰에 Swipe 기능을 추가하여 드래그, 드랍할 수 있게 도와주는 유틸리티 클래스
+ * 어떻게 움직이느냐에 따라 이벤트를 수신하고, 그에 따른 동작을 개발자가 설정할 수 있다.
  */
-
-
-/*
-ItemTouchHelper : 리사이클러뷰에 Swipe 기능을 추가하여 드래그,드랍할 수 있게 도와주는 유틸리티 클래스
-
-어떻게 움직이느냐에 따라 이벤트를 수신하고, 그에 따른 동작을 개발자가 설정할 수 있다.
-*/
 
 // ItemTouchHelper Callback 클래스 구현
 class SwipeHelperCallback : ItemTouchHelper.Callback() {
@@ -84,6 +78,7 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         setTag(viewHolder, !isClamped && currentDx <= -clamp)
         return 2f
     }
+
 
     override fun onChildDraw(
         c: Canvas,
@@ -157,5 +152,4 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
             previousPosition = null
         }
     }
-
 }

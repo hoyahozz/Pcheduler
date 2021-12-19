@@ -3,7 +3,6 @@ package com.dongyang.android.pcheduler.Adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
-import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +50,7 @@ class ListChildAdapter(
 
         holder.taskText.text = task.content
         holder.taskDelete.setOnClickListener {
-            deleteTask(task)
+            listViewModel.deleteTask(task)
         }
 
         // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수
@@ -67,7 +66,7 @@ class ListChildAdapter(
         val manager = (context as AppCompatActivity).supportFragmentManager
         holder.taskContainer.setOnClickListener {
 //            TabDialog().show(manager, "TabDialog")
-            val bottomSheet = DetailBottomSheet(task)
+            val bottomSheet = DetailBottomSheet(task, listViewModel)
             bottomSheet.show(manager, bottomSheet.tag)
         }
 
@@ -94,51 +93,17 @@ class ListChildAdapter(
         var taskEndTime = binding.itemListEndTime
     }
 
-    @SuppressLint("StaticFieldLeak")
-    fun deleteTask(task: TaskEntity) {
-        val deleteTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                listViewModel.deleteTask(task)
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-            }
-
-        }
-        deleteTask.execute()
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    fun updateTask(task: TaskEntity) {
-        val updateTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                listViewModel.updateTask(task)
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-            }
-
-        }
-        updateTask.execute()
-    }
-
     // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수
     private fun checkTask(task: TaskEntity, cb: CheckBox, tv: TextView) {
         cb.setOnCheckedChangeListener { button, ischecked ->
             if (ischecked) {
                 task.complete = "OK"
                 tv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-                updateTask(task)
+                listViewModel.updateTask(task)
             } else {
                 task.complete = "NO"
                 tv.paintFlags = 0
-                updateTask(task)
+                listViewModel.updateTask(task)
             }
         }
     }

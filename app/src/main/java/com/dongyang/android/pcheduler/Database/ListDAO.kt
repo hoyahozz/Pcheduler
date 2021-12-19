@@ -23,7 +23,7 @@ interface ListDAO {
 
     // onConflict (충돌이 일어났을 때 덮어쓰기)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertTask(task : TaskEntity)
+    suspend fun insertTask(task : TaskEntity)
 
     @Query("SELECT * FROM task ORDER BY start_time DESC")
     fun getAllTask() : LiveData<List<TaskEntity>>
@@ -32,10 +32,10 @@ interface ListDAO {
 //    fun getAllTask() : List<TaskEntity>
 
     @Delete
-    fun deleteTask(task : TaskEntity)
+    suspend fun deleteTask(task : TaskEntity)
 
     @Update
-    fun updateTask(task: TaskEntity)
+    suspend fun updateTask(task: TaskEntity)
 
     @Query("SELECT DISTINCT start_time FROM task ORDER BY start_time ASC")
     fun getParentTask() : LiveData<List<String>>

@@ -18,18 +18,18 @@ class ListRepository(private val listDAO : ListDAO) {
 //    val readAllData : LiveData<List<TaskEntity>> = listDAO.getAllTask()
     val readAllData : LiveData<List<TaskEntity>> = listDAO.getAllTask()
     val readParentData : LiveData<List<String>> = listDAO.getParentTask()
-    val readParentDate : List<String> = listDAO.getParentDate()
+    // val readParentDate : List<String> = listDAO.getParentDate()
 
 
-    fun insertTask(task : TaskEntity) {
+    suspend fun insertTask(task : TaskEntity) {
         listDAO.insertTask(task)
     }
 
-    fun deleteTask(task : TaskEntity) {
+    suspend fun deleteTask(task : TaskEntity) {
         listDAO.deleteTask(task)
     }
 
-    fun updateTask(task : TaskEntity) {
+    suspend fun updateTask(task : TaskEntity) {
         listDAO.updateTask(task)
     }
 

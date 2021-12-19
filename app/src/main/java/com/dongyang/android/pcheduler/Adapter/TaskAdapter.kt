@@ -28,6 +28,10 @@ class TaskAdapter(
     private val listViewModel = listViewModel
     private val context = context
 
+    private val swipeHelperCallback = SwipeHelperCallback().apply {
+        setClamp(200f)
+    }
+
     fun submitList(items: List<TaskItem>) { // 기존에 있던 데이터를 지우고 다시 데이터를 수정
         this.items.clear()
         this.items.addAll(items)
@@ -46,7 +50,9 @@ class TaskAdapter(
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             TaskItem.Parent.VIEW_TYPE -> TaskParentHolder(itemView)
-            TaskItem.Child.VIEW_TYPE -> TaskChildHolder(context, itemView, listViewModel)
+            TaskItem.Child.VIEW_TYPE -> TaskChildHolder(context, itemView, listViewModel).apply {
+
+            }
             else -> throw IllegalArgumentException("Cannot create ViewHolder for view type : $viewType")
         }
     }

@@ -5,7 +5,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +20,7 @@ import com.dongyang.android.pcheduler.AlarmReceiver
 import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.R
+import com.dongyang.android.pcheduler.ViewModel.ListViewModel
 import com.dongyang.android.pcheduler.databinding.BottomsheetDetailBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.SimpleDateFormat
@@ -33,11 +33,12 @@ import java.util.*
  * @Description : 할 일을 눌렀을 때 나오는 바텀시트 클래스
  */
 
-class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
+class DetailBottomSheet(task: TaskEntity, listViewModel: ListViewModel) : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomsheetDetailBinding
     private lateinit var db: ListDatabase
     private val task = task
+    private val listViewModel = listViewModel
     private lateinit var pickDate: String
     private var onButton = ""
 
@@ -132,8 +133,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // TODO : 완료 버튼을 눌렀을 때 데이터베이스 수정 일어나게 설정하기 (11/13) -> DONE
                 task.content = binding.dbsEtContent.text.toString()
-                updateTask(task)
-
+                listViewModel.updateTask(task)
 
                 var calendar = Calendar.getInstance()
                 val alarmManager =
@@ -170,7 +170,7 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
 
                     var pendingRequestCode: Int = task.id!!
 
-                    // java.lang.IllegalArgumentException: com.dongyang.android.pcheduler:
+                    // TODO ::  java.lang.IllegalArgumentException: com.dongyang.android.pcheduler:
                     // Targeting S+ (version 31 and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE be specified when creating a PendingIntent.
                     var pendingIntent =
                         PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
@@ -218,25 +218,8 @@ class DetailBottomSheet(task: TaskEntity) : BottomSheetDialogFragment() {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    fun updateTask(task: TaskEntity) {
-        val updateTask = object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg p0: Unit?) {
-                // WorkerThread 에서 어떤 일을 할지 정의한다.
-                db.listDAO().updateTask(task)
-            }
-
-            override fun onPostExecute(result: Unit?) {
-                // doInBackground 이후 어떤 일을 할 것인지 지정한다.
-                super.onPostExecute(result)
-            }
-        }
-        updateTask.execute()
-    }
-
     // TODO : Inner class로 호출 시 오류, 원인 알아보기(11/10)
     // TODO : 종료 날짜가 시작 날짜보다 멀어야 함.
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannel(notificationManager: NotificationManager, context: Context) {

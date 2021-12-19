@@ -2,6 +2,7 @@ package com.dongyang.android.pcheduler.Adapter
 
 import android.content.Context
 import android.graphics.Paint
+import android.text.Layout
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
@@ -59,7 +60,7 @@ class TaskChildHolder(
             val manager = (context as AppCompatActivity).supportFragmentManager
             taskContainer.setOnClickListener {
 //            TabDialog().show(manager, "TabDialog")
-                val bottomSheet = DetailBottomSheet(task)
+                val bottomSheet = DetailBottomSheet(task, listViewModel)
                 bottomSheet.show(manager, bottomSheet.tag)
             }
 
