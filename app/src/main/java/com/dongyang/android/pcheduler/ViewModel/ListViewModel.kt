@@ -48,11 +48,12 @@ class ListViewModel() : ViewModel() {
         val result = arrayListOf<TaskItem>()
         var groupParentDate = ""
         this.forEach { task ->
+            // 날짜가 달라지면 그룹헤더 추가
             if (groupParentDate != task.start_time) {
                 result.add(TaskItem.Parent(task))
             }
-            result.add(TaskItem.Child(task))
-            groupParentDate = task.start_time
+            result.add(TaskItem.Child(task)) // 태스크 추가
+            groupParentDate = task.start_time // 그룹 날짜를 바로 이전 날짜로 설정
         }
         return result
     }

@@ -11,9 +11,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dongyang.android.pcheduler.Adapter.SwipeHelperCallback
 import com.dongyang.android.pcheduler.Adapter.TaskAdapter
+import com.dongyang.android.pcheduler.Adapter.TaskListAdapter
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
 import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
@@ -40,7 +43,10 @@ class ListFragment : Fragment() {
 
     private val listViewModel : ListViewModel by viewModels()
     private val taskAdapter by lazy {
-        TaskAdapter(requireContext(),listViewModel)
+        TaskAdapter(listViewModel)
+    }
+    private val taskListAdapter by lazy {
+        TaskListAdapter(listViewModel)
     }
     var today = ""
 
@@ -52,7 +58,7 @@ class ListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         // View Binding -> FindViewById 없이 View에서 바로 사용할 수 있게 해줌.
         _binding = FragmentListBinding.inflate(inflater, container, false)
@@ -81,12 +87,17 @@ class ListFragment : Fragment() {
         }
 */
 
+        // ItemTouchHelper
+//        val itemTouchHelper = ItemTouchHelper(SwipeHelperCallback())
+//        itemTouchHelper.attachToRecyclerView(binding.listRcview)
+
         // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
         binding.listRcview.apply {
             // this.addItemDecoration(dividerItemDecoration)
-            this.adapter = taskAdapter
+            this.adapter = taskListAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
 //            this.addItemDecoration(RecyclerViewDecoration(10))
+
         }
 
         listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면
@@ -95,7 +106,7 @@ class ListFragment : Fragment() {
         }
 
         listViewModel.tasks.observe(viewLifecycleOwner) {
-            taskAdapter.submitList(it)
+            taskListAdapter.submitList(it)
         }
 
         binding.listBtnAdd.setOnClickListener {

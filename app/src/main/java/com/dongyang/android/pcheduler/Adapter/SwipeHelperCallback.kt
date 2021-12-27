@@ -137,7 +137,6 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
     private fun getTag(viewHolder: RecyclerView.ViewHolder) : Boolean {
         return viewHolder.itemView.tag as? Boolean ?: false
     }
-
     fun setClamp(clamp : Float) {
         this.clamp = clamp
     }

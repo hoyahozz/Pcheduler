@@ -12,7 +12,7 @@ import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
 
 class TaskParentHolder(
     itemView: View
-) : TaskAdapter.TaskViewHolder(itemView) {
+) : TaskListAdapter.TaskListViewHolder(itemView) {
     private val binding by lazy { ItemListParentBinding.bind(itemView) }
 
     override fun bind(item: TaskItem) {

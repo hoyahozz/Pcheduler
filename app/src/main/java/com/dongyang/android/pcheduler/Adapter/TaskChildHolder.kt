@@ -26,7 +26,7 @@ class TaskChildHolder(
     context : Context,
     itemView : View,
     listViewModel: ListViewModel
-) : TaskAdapter.TaskViewHolder(itemView) {
+) : TaskListAdapter.TaskListViewHolder(itemView) {
     private val binding by lazy { ItemListBinding.bind(itemView) }
     private val listViewModel = listViewModel
     private val context = context
