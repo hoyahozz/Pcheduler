@@ -101,7 +101,7 @@ class ListFragment : Fragment() {
         }
 
         listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면
-            Log.d("task test", "real All task observing")
+            Log.d("task test", "All task observing")
              listViewModel.fetchTasks(it)
         }
 

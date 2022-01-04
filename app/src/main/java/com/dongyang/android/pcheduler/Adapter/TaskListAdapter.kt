@@ -41,8 +41,6 @@ class TaskListAdapter(
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
         holder.bind(getItem(position))
-        Log.d(TAG, "$position :: ${getItem(position).task.content}")
-        Log.d(TAG, "$position :: ${getItem(position).layoutId}")
     }
 
     abstract class TaskListViewHolder(
@@ -55,7 +53,7 @@ class TaskListAdapter(
         const val TAG = "TaskListAdapter"
         val myDiffCallBack = object : DiffUtil.ItemCallback<TaskItem>() {
             override fun areItemsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
-                return oldItem.task == newItem.task
+                return oldItem == newItem
             }
 
             override fun areContentsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {

@@ -3,6 +3,7 @@ package com.dongyang.android.pcheduler.Adapter
 import android.content.Context
 import android.graphics.Paint
 import android.text.Layout
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
@@ -23,24 +24,22 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
  */
 
 class TaskChildHolder(
-    context : Context,
-    itemView : View,
-    listViewModel: ListViewModel
+    private val context: Context,
+    itemView: View,
+    private val listViewModel: ListViewModel
 ) : TaskListAdapter.TaskListViewHolder(itemView) {
     private val binding by lazy { ItemListBinding.bind(itemView) }
-    private val listViewModel = listViewModel
-    private val context = context
 
     override fun bind(item: TaskItem) {
         val task = (item as TaskItem.Child).task
         binding.apply {
 
-            var taskText = this.itemList
-            var taskImage = this.itemListImg
-            var taskContainer = this.itemListContainer
-            var taskDelete = this.itemListDelete
-            var taskCheck = this.itemListCheckBox
-            var taskEndTime = this.itemListEndTime
+            val taskText = this.itemList
+            val taskImage = this.itemListImg
+            val taskContainer = this.itemListContainer
+            val taskDelete = this.itemListDelete
+            val taskCheck = this.itemListCheckBox
+            val taskEndTime = this.itemListEndTime
 
             taskText.text = task.content
 
@@ -64,14 +63,21 @@ class TaskChildHolder(
                 bottomSheet.show(manager, bottomSheet.tag)
             }
 
+
             if (task.end_time != "") {
                 val taskET = "~ " + task.end_time.substring(5, task.end_time.length)
                 taskEndTime.text = taskET
                 taskEndTime.visibility = View.VISIBLE
+            } else { // 조건상 없을 때에는 UI를 다시 초기화 해주어야 하는 모습 확인
+                taskEndTime.text = " "
+                taskEndTime.visibility = View.INVISIBLE
             }
+
 
             if (task.alarm != "") {
                 taskImage.setImageResource(R.drawable.ic_alarm_on)
+            } else { // 조건상 없을 때에는 UI를 다시 초기화 해주어야 하는 모습 확인
+                taskImage.setImageResource(R.drawable.ic_alarm_off)
             }
         }
     }

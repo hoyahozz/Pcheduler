@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/bottomsheet_detail.xml" value="0.209375" />
         <entry key="app/src/main/res/layout/dialog_calendar.xml" value="0.2546875" />
+        <entry key="app/src/main/res/layout/dialog_detail.xml" value="0.209375" />
         <entry key="app/src/main/res/layout/fragment_cal.xml" value="0.2546875" />
         <entry key="app/src/main/res/layout/item_list.xml" value="0.2546875" />
         <entry key="app/src/main/res/layout/item_list_parent.xml" value="0.2546875" />
+        <entry key="app/src/main/res/layout/tab_set_date.xml" value="0.209375" />
       </map>
     </option>
   </component>
