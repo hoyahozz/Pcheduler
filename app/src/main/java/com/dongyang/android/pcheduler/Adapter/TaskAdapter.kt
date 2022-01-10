@@ -23,14 +23,13 @@ import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
 
 
 class TaskAdapter(
-    listViewModel: ListViewModel
+    private val listViewModel: ListViewModel
 ) :
 
     RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     private val TAG = "TaskAdapter"
     private val items = arrayListOf<TaskItem>()
-    private val listViewModel = listViewModel
 
 
     private val swipeHelperCallback = SwipeHelperCallback().apply {
@@ -63,7 +62,7 @@ class TaskAdapter(
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         holder.bind(getItem(position))
-        Log.d(TAG, "$position :: ${items[position].task.content}")
+        Log.d(TAG, "$position :: ${items[position].task.start_time}")
         Log.d(TAG, "$position :: ${items[position].layoutId}")
     }
 

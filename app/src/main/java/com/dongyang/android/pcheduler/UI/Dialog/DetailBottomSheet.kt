@@ -33,12 +33,10 @@ import java.util.*
  * @Description : 할 일을 눌렀을 때 나오는 바텀시트 클래스
  */
 
-class DetailBottomSheet(task: TaskEntity, listViewModel: ListViewModel) : BottomSheetDialogFragment() {
+class DetailBottomSheet(private val task: TaskEntity, private val listViewModel: ListViewModel) : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomsheetDetailBinding
     private lateinit var db: ListDatabase
-    private val task = task
-    private val listViewModel = listViewModel
     private lateinit var pickDate: String
     private var onButton = ""
 
@@ -53,7 +51,7 @@ class DetailBottomSheet(task: TaskEntity, listViewModel: ListViewModel) : Bottom
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = BottomsheetDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -133,6 +131,8 @@ class DetailBottomSheet(task: TaskEntity, listViewModel: ListViewModel) : Bottom
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // TODO : 완료 버튼을 눌렀을 때 데이터베이스 수정 일어나게 설정하기 (11/13) -> DONE
                 task.content = binding.dbsEtContent.text.toString()
+
+                Log.d(TAG, "완료버튼 후 데이터 : ${task.content} :: ${task.end_time}")
                 listViewModel.updateTask(task)
 
                 var calendar = Calendar.getInstance()
@@ -186,10 +186,9 @@ class DetailBottomSheet(task: TaskEntity, listViewModel: ListViewModel) : Bottom
                 }
 
                 Log.d("Update Test :: ", task.start_time + " + " + task.end_time)
-                Log.d("Update Test :: ", "(${task.alarm}")
+                Log.d("Update Test :: ", "${task.alarm}")
 
                 dismiss()
-                true
             }
             false
         }
@@ -282,8 +281,8 @@ class DetailBottomSheet(task: TaskEntity, listViewModel: ListViewModel) : Bottom
             window.decorView.viewTreeObserver.removeOnGlobalLayoutListener(onGlobalLayoutListener)
         }
     }
+    
+    companion object {
+        private const val TAG = "DetailBottomSheet"
+    }
 }
-
-
-
-

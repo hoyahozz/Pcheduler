@@ -19,10 +19,9 @@ import java.text.SimpleDateFormat
  * @Description : 알람 설정 다이얼로그
  */
 
-class AlarmDialog(task : TaskEntity) : DialogFragment() {
+class AlarmDialog(private var task : TaskEntity) : DialogFragment() {
 
     private lateinit var binding: DialogDateandtimePickerBinding
-    private var task = task
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -42,6 +42,7 @@ class TaskChildHolder(
             val taskEndTime = this.itemListEndTime
 
             taskText.text = task.content
+            Log.d(TAG, "bind: ${task.id} ::${task.content}")
 
             taskDelete.setOnClickListener {
                 listViewModel.deleteTask(task)
@@ -70,7 +71,7 @@ class TaskChildHolder(
                 taskEndTime.visibility = View.VISIBLE
             } else { // 조건상 없을 때에는 UI를 다시 초기화 해주어야 하는 모습 확인
                 taskEndTime.text = " "
-                taskEndTime.visibility = View.INVISIBLE
+                taskEndTime.visibility = View.GONE
             }
 
 
@@ -96,5 +97,10 @@ class TaskChildHolder(
                 listViewModel.updateTask(task)
             }
         }
+    }
+    
+
+    companion object {
+        private const val TAG = "TaskChildHolder"
     }
 }

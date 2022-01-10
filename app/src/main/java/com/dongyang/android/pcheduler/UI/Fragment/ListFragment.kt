@@ -23,6 +23,10 @@ import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.Model.TaskItem
 import com.dongyang.android.pcheduler.Repository.ListRepository
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,7 +45,7 @@ class ListFragment : Fragment() {
     private val binding get() = _binding!!
     // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
 
-    private val listViewModel : ListViewModel by viewModels()
+    private val listViewModel: ListViewModel by viewModels()
     private val taskAdapter by lazy {
         TaskAdapter(listViewModel)
     }
@@ -87,7 +91,7 @@ class ListFragment : Fragment() {
         }
 */
 
-        // ItemTouchHelper
+        // TODO :: ItemTouchHelper
 //        val itemTouchHelper = ItemTouchHelper(SwipeHelperCallback())
 //        itemTouchHelper.attachToRecyclerView(binding.listRcview)
 
@@ -96,17 +100,17 @@ class ListFragment : Fragment() {
             // this.addItemDecoration(dividerItemDecoration)
             this.adapter = taskListAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
-//            this.addItemDecoration(RecyclerViewDecoration(10))
-
+            this.addItemDecoration(RecyclerViewDecoration(2))
         }
 
         listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면
             Log.d("task test", "All task observing")
-             listViewModel.fetchTasks(it)
+            listViewModel.fetchTasks(it)
         }
 
         listViewModel.tasks.observe(viewLifecycleOwner) {
-            taskListAdapter.submitList(it)
+            Log.d("task test", "Tasks Observing")
+            taskListAdapter.submitList(it.toMutableList())
         }
 
         binding.listBtnAdd.setOnClickListener {

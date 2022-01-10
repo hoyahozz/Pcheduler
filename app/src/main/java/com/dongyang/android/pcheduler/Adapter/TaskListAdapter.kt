@@ -22,8 +22,6 @@ import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
  * @Description :
  */
 
-
-
 class TaskListAdapter(
     private val listViewModel: ListViewModel
 ) : ListAdapter<TaskItem, TaskListAdapter.TaskListViewHolder>(myDiffCallBack){
@@ -40,6 +38,7 @@ class TaskListAdapter(
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
+        Log.d(TAG, "onBindViewHolder position: ${getItem(position).task.start_time}")
         holder.bind(getItem(position))
     }
 
@@ -55,11 +54,10 @@ class TaskListAdapter(
             override fun areItemsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
                 return oldItem == newItem
             }
-
             override fun areContentsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
-                return oldItem == newItem
+                Log.d(TAG, "areContentsTheSame: ${oldItem == newItem}")
+                return oldItem.hashCode() == newItem.hashCode()
             }
-
         }
     }
 }

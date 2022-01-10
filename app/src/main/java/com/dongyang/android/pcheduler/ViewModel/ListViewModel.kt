@@ -19,17 +19,19 @@ import kotlinx.coroutines.launch
 class ListViewModel() : ViewModel() {
 
     val readParentData: LiveData<List<String>>
-    // val parentData: List<String>
     val readAllTask : LiveData<List<TaskEntity>>
 
     private val repository: ListRepository
+
+    private var _currentData = MutableLiveData<List<TaskEntity>>()
+    val currentData : LiveData<List<TaskEntity>>
+        get() = _currentData
 
     // 초기값 설정
     init {
         val listDAO = ListDatabase.INSTANCE!!.listDAO()
         repository = ListRepository(listDAO)
         readParentData = repository.readParentData
-        // parentData = repository.readParentDate
         readAllTask = repository.readAllData
     }
 
@@ -74,19 +76,12 @@ class ListViewModel() : ViewModel() {
         viewModelScope.launch {
             repository.deleteTask(task)
         }
-
     }
 
-    fun getChildTask(start_time: String): List<TaskEntity> {
-        val tmp = repository.readChildData(start_time)
-        // _currentData.postValue(tmp)
-        return tmp
+    fun readDateData(start_time : String) {
+        viewModelScope.launch {
+            val tmp = repository.readDateTask(start_time)
+            _currentData.postValue(tmp)
+        }
     }
-
-//    class Factory(val application: Application) : ViewModelProvider.Factory {
-//        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//            return ListViewModel(application) as T
-//        }
-//    }
-
 }
