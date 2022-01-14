@@ -92,15 +92,26 @@ class ListFragment : Fragment() {
 */
 
         // TODO :: ItemTouchHelper
-//        val itemTouchHelper = ItemTouchHelper(SwipeHelperCallback())
-//        itemTouchHelper.attachToRecyclerView(binding.listRcview)
+        val swipeHelperCallback = SwipeHelperCallback().apply {
+            setClamp(100f)
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.listRcview)
+
+
 
         // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
         binding.listRcview.apply {
             // this.addItemDecoration(dividerItemDecoration)
             this.adapter = taskListAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
-            this.addItemDecoration(RecyclerViewDecoration(2))
+            this.addItemDecoration(RecyclerViewDecoration(5))
+
+            setOnTouchListener { _, _ ->
+                swipeHelperCallback.removePreviousClamp(this)
+                false
+            }
         }
 
         listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면

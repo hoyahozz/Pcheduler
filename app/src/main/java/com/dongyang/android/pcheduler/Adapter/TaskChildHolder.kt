@@ -30,19 +30,22 @@ class TaskChildHolder(
 ) : TaskListAdapter.TaskListViewHolder(itemView) {
     private val binding by lazy { ItemListBinding.bind(itemView) }
 
+    val taskContainer by lazy {
+        binding.itemListContainer
+    }
+
     override fun bind(item: TaskItem) {
         val task = (item as TaskItem.Child).task
         binding.apply {
 
             val taskText = this.itemList
             val taskImage = this.itemListImg
-            val taskContainer = this.itemListContainer
+//            val taskContainer = this.itemListContainer
             val taskDelete = this.itemListDelete
             val taskCheck = this.itemListCheckBox
             val taskEndTime = this.itemListEndTime
 
             taskText.text = task.content
-            Log.d(TAG, "bind: ${task.id} ::${task.content}")
 
             taskDelete.setOnClickListener {
                 listViewModel.deleteTask(task)
@@ -59,7 +62,6 @@ class TaskChildHolder(
 
             val manager = (context as AppCompatActivity).supportFragmentManager
             taskContainer.setOnClickListener {
-//            TabDialog().show(manager, "TabDialog")
                 val bottomSheet = DetailBottomSheet(task, listViewModel)
                 bottomSheet.show(manager, bottomSheet.tag)
             }
@@ -98,7 +100,7 @@ class TaskChildHolder(
             }
         }
     }
-    
+
 
     companion object {
         private const val TAG = "TaskChildHolder"

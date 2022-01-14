@@ -1,6 +1,7 @@
 package com.dongyang.android.pcheduler.Adapter
 
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -17,8 +18,8 @@ import kotlin.math.min
 // ItemTouchHelper Callback 클래스 구현
 class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
-    private var currentPosition : Int? = null
-    private var previousPosition : Int? = null
+    private var currentPosition: Int? = null
+    private var previousPosition: Int? = null
     private var currentDx = 0f
     private var clamp = 0f
 
@@ -27,8 +28,13 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+        return if (viewHolder is TaskParentHolder) { // 부모 태스크는 좌우로 스와이프 되지 않게 설정하였음.
+            makeMovementFlags(0, 0)
+        } else {
+            makeMovementFlags(0, ItemTouchHelper.START or ItemTouchHelper.END)
+        }
     }
+
     // 드래그될 때 호출된다.
     override fun onMove(
         recyclerView: RecyclerView,
@@ -101,20 +107,21 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         }
     }
 
+
     private fun clampViewPositionHorizontal(
         view: View,
         dX: Float,
         isClamped: Boolean,
         isCurrentlyActive: Boolean
-    ) : Float {
+    ): Float {
         // View 의 가로 길이 절반까지만 스와이프 되도록 설정한다.
-        val min : Float = -view.width.toFloat()/2
+        val min: Float = -view.width.toFloat() / 4
         // RIGHT 방향으로 스와이프를 막는다.
-        val max : Float = 0f
+        val max: Float = 0f
 
         val x = if (isClamped) {
             // View 고정 시 스와이프 되는 영역을 제한한다.
-            if(isCurrentlyActive) dX - clamp else -clamp
+            if (isCurrentlyActive) dX - clamp else -clamp
         } else {
             dX
         }
@@ -122,27 +129,9 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         return min(max(min, x), max)
     }
 
-
-
-    private fun getView(viewHolder: RecyclerView.ViewHolder) : View {
-        return (viewHolder as ListChildAdapter.MainViewHolder).taskContainer
-    }
-
-    // isClamped 를 View의 Tag로 관리한다.
-    private fun setTag(viewHolder: RecyclerView.ViewHolder, isClamped : Boolean) {
-        viewHolder.itemView.tag = isClamped
-    }
-
-    // isClamped 를 View의 Tag로 관리한다.
-    private fun getTag(viewHolder: RecyclerView.ViewHolder) : Boolean {
-        return viewHolder.itemView.tag as? Boolean ?: false
-    }
-    fun setClamp(clamp : Float) {
-        this.clamp = clamp
-    }
-
     // 다른 View가 스와이프되거나 터치되면 고정을 해제한다.
     fun removePreviousClamp(recyclerView: RecyclerView) {
+        Log.d(TAG, "removePreviousClamp: ON")
         if (currentPosition == previousPosition) return
         previousPosition?.let {
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
@@ -150,5 +139,27 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
             setTag(viewHolder, false)
             previousPosition = null
         }
+    }
+
+    private fun getView(viewHolder: RecyclerView.ViewHolder): View {
+        return (viewHolder as TaskChildHolder).taskContainer
+    }
+
+    // isClamped 를 View의 Tag로 관리한다.
+    private fun setTag(viewHolder: RecyclerView.ViewHolder, isClamped: Boolean) {
+        viewHolder.itemView.tag = isClamped
+    }
+
+    // isClamped 를 View의 Tag로 관리한다.
+    private fun getTag(viewHolder: RecyclerView.ViewHolder): Boolean {
+        return viewHolder.itemView.tag as? Boolean ?: false
+    }
+
+    fun setClamp(clamp: Float) {
+        this.clamp = clamp
+    }
+
+    companion object {
+        private const val TAG = "SwipeHelperCallback"
     }
 }
