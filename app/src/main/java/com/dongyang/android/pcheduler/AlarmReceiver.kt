@@ -8,11 +8,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.media.RingtoneManager
+import android.os.AsyncTask
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.dongyang.android.pcheduler.Database.ListDatabase
+import com.dongyang.android.pcheduler.ViewModel.ListViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * @Author : Jeong Ho Kim
@@ -24,6 +30,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     // ID는 별도로 빼놓음
     companion object {
+        const val TAG = "AlarmReceiver"
         const val NOTIFICATION_ID = 100
         const val NOTIFICATION_CHANNEL_ID = "alarm_channel"
         const val NOTIFICATION_CHANNEL_NAME = "My Alarm"
@@ -33,26 +40,17 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
 
         val content: String = intent?.getStringExtra("content")!!
-        val requestCode = intent.getIntExtra("id", NOTIFICATION_ID)
+        val requestCode = intent.getIntExtra("id", NOTIFICATION_ID) // requestCode = task의 ID
 
-
-        val notificationManager: NotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val importance = NotificationManager.IMPORTANCE_HIGH
+        // 정해진 시간과 동시에 알람을 제거
+        // 작동은 되지만, GlobalScope는 앱이 종료되기 전까지 사라지지 않음.
+        GlobalScope.launch {
+            alarmRemove(requestCode, context)
+        }
 
         // 26버전 이상부터는 notification 처리를 위해 채널이 필요
         createNotificationChannel(context)
         notifyNotification(context, content, requestCode)
-
-
-//        val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_alarm)
-//            .setContentTitle(content)
-//            .setAutoCancel(true) // 알림 클릭 시 알림 제거 여부
-//            .setContentIntent(pendingIntent)
-//            .build()
-//
-//        notificationManager.notify(importance, notification)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -76,10 +74,21 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
+    // 정해진 시간과 동시에 알람을 제거
+    private suspend fun alarmRemove(id : Int, context: Context) {
+        Log.d(TAG, "alarm: ON")
+        val db = ListDatabase.getInstance(context)!! // NOT NULL
+        val task = db.listDAO().getTask(id)
+        task.alarm = ""
+
+        db.listDAO().updateTask(task)
+    }
+
     private fun notifyNotification(context: Context, content: String, requestCode: Int) {
 
         val intent = Intent(context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+
         val pendingIntent =
             PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 

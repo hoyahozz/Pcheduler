@@ -1,6 +1,5 @@
 package com.dongyang.android.pcheduler.ViewModel
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.dongyang.android.pcheduler.Repository.ListRepository
@@ -19,12 +18,10 @@ import kotlinx.coroutines.launch
 class ListViewModel : ViewModel() {
 
     private val readParentData: LiveData<List<String>>
-    val readAllTask : LiveData<List<TaskEntity>>
-
+    val readAllTask: LiveData<List<TaskEntity>>
     private val repository: ListRepository
-
     private var _currentData = MutableLiveData<List<TaskEntity>>()
-    val currentData : LiveData<List<TaskEntity>>
+    val currentData: LiveData<List<TaskEntity>>
         get() = _currentData
 
     // 초기값 설정
@@ -38,7 +35,7 @@ class ListViewModel : ViewModel() {
     private val taskLiveData = MutableLiveData<List<TaskItem>>() // 변화가능한 라이브데이터
     val tasks: LiveData<List<TaskItem>> get() = taskLiveData // getter
 
-    fun fetchTasks(task : List<TaskEntity>) {
+    fun fetchTasks(task: List<TaskEntity>) {
         viewModelScope.launch {
             val listItems = task.toListItems()
             taskLiveData.postValue(listItems)
@@ -78,10 +75,21 @@ class ListViewModel : ViewModel() {
         }
     }
 
-    fun readDateData(start_time : String) {
+    fun readDateData(start_time: String) {
         viewModelScope.launch {
             val tmp = repository.readDateTask(start_time)
             _currentData.postValue(tmp)
+        }
+    }
+
+    private val _currentTask = MutableLiveData<TaskEntity>()
+    val currentTask : LiveData<TaskEntity> get() = _currentTask
+
+    fun getTask(id: Int) {
+        Log.d("getTask", "ON")
+        viewModelScope.launch {
+            val tmp = repository.getTask(id)
+            _currentTask.postValue(tmp)
         }
     }
 }

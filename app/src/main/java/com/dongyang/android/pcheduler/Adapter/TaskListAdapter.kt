@@ -19,7 +19,7 @@ import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-12-02
- * @Description :
+ * @Description : 할 일 목록 어댑터, ListAdapter 로 구성하였음.
  */
 
 class TaskListAdapter(
@@ -38,7 +38,7 @@ class TaskListAdapter(
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder position: ${getItem(position).task.start_time}")
+//        Log.d(TAG, "onBindViewHolder position: ${getItem(position).task.id}")
         holder.bind(getItem(position))
     }
 
@@ -55,7 +55,6 @@ class TaskListAdapter(
                 return oldItem == newItem
             }
             override fun areContentsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
-                Log.d(TAG, "areContentsTheSame: ${oldItem == newItem}")
                 return oldItem.hashCode() == newItem.hashCode()
             }
         }

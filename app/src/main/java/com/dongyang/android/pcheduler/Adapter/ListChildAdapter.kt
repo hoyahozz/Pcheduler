@@ -26,7 +26,7 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
 class ListChildAdapter(
     val context: Context,
     private val listViewModel: ListViewModel,
-    var childList : List<TaskEntity>
+    private var childList : List<TaskEntity>
 ) : RecyclerView.Adapter<ListChildAdapter.MainViewHolder>() {
 
 //    private var childList = emptyList<TaskEntity>()

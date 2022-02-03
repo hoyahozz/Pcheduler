@@ -20,7 +20,7 @@ import com.dongyang.android.pcheduler.databinding.ItemListBinding
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-12-02
- * @Description :
+ * @Description : 자식 리사이클러뷰 구성
  */
 
 class TaskChildHolder(
@@ -75,8 +75,8 @@ class TaskChildHolder(
                 taskEndTime.text = " "
                 taskEndTime.visibility = View.GONE
             }
-
-
+            
+            // 알람 설정
             if (task.alarm != "") {
                 taskImage.setImageResource(R.drawable.ic_alarm_on)
             } else { // 조건상 없을 때에는 UI를 다시 초기화 해주어야 하는 모습 확인

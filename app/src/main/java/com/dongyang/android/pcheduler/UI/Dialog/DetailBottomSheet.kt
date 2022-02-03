@@ -122,8 +122,6 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
         }
 
         binding.dbsEtContent.setText(task.content)
-
-
         binding.dbsEtContent.imeOptions = EditorInfo.IME_ACTION_DONE // EditText 완료 버튼 설정
         // 완료 버튼을 눌렀을 때 할 행동 설정
         binding.dbsEtContent.setOnEditorActionListener { textView, actionId, keyEvent ->
@@ -170,11 +168,11 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
                     ).show()
                 } else { // 알람 설정 안했을 때는 취소
 
-                    var pendingRequestCode: Int = task.id!!
+                    val pendingRequestCode: Int = task.id!!
 
                     // TODO ::  java.lang.IllegalArgumentException: com.dongyang.android.pcheduler:
                     // Targeting S+ (version 31 and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE be specified when creating a PendingIntent.
-                    var pendingIntent =
+                    val pendingIntent =
                         PendingIntent.getBroadcast(context, pendingRequestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 
                     pendingIntent.cancel()
@@ -195,9 +193,7 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
             false
         }
 
-
         val manager = (context as AppCompatActivity).supportFragmentManager
-
 
         // 시작 버튼을 눌렀을 때 달력 출력되게 설정하였음.
         binding.dbsBtnStartDate.setOnClickListener {
@@ -217,27 +213,6 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
             val alarm = AlarmDialog(task)
             alarm.show(parentFragmentManager, alarm.tag)
         }
-    }
-
-    // TODO : Inner class로 호출 시 오류, 원인 알아보기(11/10)
-    // TODO : 종료 날짜가 시작 날짜보다 멀어야 함.
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun createNotificationChannel(notificationManager: NotificationManager, context: Context) {
-
-        val NOTIFICATION_CHANNEL_ID = "alarm_channel"
-        val NOTIFICATION_CHANNEL_NAME = "My Alarm"
-        val descriptionText = "my alarm"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID,
-            NOTIFICATION_CHANNEL_NAME,
-            importance
-        ).apply {
-            enableLights(true)
-            description = descriptionText
-        }
-        notificationManager.createNotificationChannel(channel)
     }
 
     // 키보드가 올라오고 내려갈 때 동작하는 클래스

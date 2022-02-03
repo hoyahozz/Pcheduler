@@ -130,7 +130,7 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
     // 다른 View가 스와이프되거나 터치되면 고정을 해제한다.
     fun removePreviousClamp(recyclerView: RecyclerView) {
-        Log.d(TAG, "removePreviousClamp: ON")
+        // Log.d(TAG, "removePreviousClamp: ON")
         if (currentPosition == previousPosition) return
         previousPosition?.let {
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return

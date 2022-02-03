@@ -10,23 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.Adapter.SwipeHelperCallback
-import com.dongyang.android.pcheduler.Adapter.TaskAdapter
 import com.dongyang.android.pcheduler.Adapter.TaskListAdapter
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
 import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
-import com.dongyang.android.pcheduler.Model.TaskItem
-import com.dongyang.android.pcheduler.Repository.ListRepository
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 

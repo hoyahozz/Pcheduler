@@ -32,4 +32,8 @@ class ListRepository(private val listDAO: ListDAO) {
     suspend fun readDateTask(start_time: String): List<TaskEntity> {
         return listDAO.getDateTask(start_time)
     }
+
+    suspend fun getTask(id: Int): TaskEntity {
+        return listDAO.getTask(id)
+    }
 }

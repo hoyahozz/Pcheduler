@@ -43,4 +43,7 @@ interface ListDAO {
     @Query("SELECT * FROM task WHERE start_time = :start_time")
     suspend fun getDateTask(start_time : String) : List<TaskEntity>
 
+    @Query("SELECT * FROM task WHERE id = :id")
+    fun getTask(id : Int) : TaskEntity
+
 }
