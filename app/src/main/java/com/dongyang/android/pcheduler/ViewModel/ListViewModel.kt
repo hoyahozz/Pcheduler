@@ -16,9 +16,9 @@ import kotlinx.coroutines.launch
  */
 
 // 뷰모델은 DB에 직접 접근 X
-class ListViewModel() : ViewModel() {
+class ListViewModel : ViewModel() {
 
-    val readParentData: LiveData<List<String>>
+    private val readParentData: LiveData<List<String>>
     val readAllTask : LiveData<List<TaskEntity>>
 
     private val repository: ListRepository

@@ -38,7 +38,7 @@ import java.util.*
 
 class ListFragment : Fragment() {
 
-    lateinit var db: ListDatabase // 데이터베이스
+    private lateinit var db: ListDatabase // 데이터베이스
     private var _binding: FragmentListBinding? = null // 뷰 바인딩
 
     // _를 붙이는 이유 : private 한 변수는 관례상 prefix 를 붙이는 경우가 많다.
@@ -70,8 +70,8 @@ class ListFragment : Fragment() {
         // Context -> Fragment 에서는 requireContext() 를 사용한다.
         db = ListDatabase.getInstance(requireContext())!! // NOT NULL
 
-        var currentTime: Long = System.currentTimeMillis()
-        var timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
+        val currentTime: Long = System.currentTimeMillis()
+        val timeFormat = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
         today = timeFormat.format(Date(currentTime))
 
         return view
@@ -93,7 +93,7 @@ class ListFragment : Fragment() {
 
         // TODO :: ItemTouchHelper
         val swipeHelperCallback = SwipeHelperCallback().apply {
-            setClamp(100f)
+            setClamp(150f)
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeHelperCallback)
@@ -125,12 +125,12 @@ class ListFragment : Fragment() {
         }
 
         binding.listBtnAdd.setOnClickListener {
-            var text = binding.listEdtTask.text.toString() // 할 일 내용
+            val text = binding.listEdtTask.text.toString() // 할 일 내용
 
             if (text == "") {
                 Toast.makeText(requireContext(), "내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
             } else {
-                var task = TaskEntity(null, today, "", text, "NO", "NO", "")
+                val task = TaskEntity(null, today, "", text, "NO", "NO", "")
                 listViewModel.insertTask(task)
 
                 binding.listEdtTask.setText("")

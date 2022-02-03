@@ -132,7 +132,6 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
                 // TODO : 완료 버튼을 눌렀을 때 데이터베이스 수정 일어나게 설정하기 (11/13) -> DONE
                 task.content = binding.dbsEtContent.text.toString()
 
-                Log.d(TAG, "완료버튼 후 데이터 : ${task.content} :: ${task.end_time}")
                 listViewModel.updateTask(task)
 
                 var calendar = Calendar.getInstance()
@@ -151,15 +150,18 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
 
                     calendar.time = alarmDate
 
-                    var pendingRequestCode: Int = task.id!!
+                    val pendingRequestCode: Int = task.id!!
+                    val pendingIntent =
+                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 
-                    var pendingIntent =
-                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
-
-                    alarmManager.setInexactRepeating(
-                        AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY, pendingIntent
+                    alarmManager.set(
+                        AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
                     )
+
+//                    alarmManager.setInexactRepeating(
+//                        AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
+//                        AlarmManager.INTERVAL_DAY, pendingIntent
+//                    )
 
                     Toast.makeText(
                         context,
@@ -173,7 +175,7 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
                     // TODO ::  java.lang.IllegalArgumentException: com.dongyang.android.pcheduler:
                     // Targeting S+ (version 31 and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE be specified when creating a PendingIntent.
                     var pendingIntent =
-                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, 0)
+                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 
                     pendingIntent.cancel()
 
