@@ -5,7 +5,7 @@ import com.dongyang.android.pcheduler.R
 /**
  * @Author : Jeong Ho Kim
  * @Created : 2021-12-02
- * @Description :
+ * @Description : ListAdapter 에 사용할 부모 - 자식 데이터 설정
  */
 
 sealed class TaskItem {

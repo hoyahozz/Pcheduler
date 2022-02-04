@@ -42,6 +42,10 @@ class TaskListAdapter(
         holder.bind(getItem(position))
     }
 
+//    override fun submitList(list: List<TaskItem>?) {
+//        super.submitList(list?.let { ArrayList(it)})
+//    }
+
     abstract class TaskListViewHolder(
         itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
@@ -51,11 +55,22 @@ class TaskListAdapter(
     companion object {
         const val TAG = "TaskListAdapter"
         val myDiffCallBack = object : DiffUtil.ItemCallback<TaskItem>() {
+            // 현 리스트에 노출하고 있는 아이템과 새로운 아이템이 서로 같은지 비교한다. (보통 고유한 ID값 체크)
             override fun areItemsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
-                return oldItem == newItem
+                return oldItem.task.id == newItem.task.id
             }
+            // 현 리스트에 노출하고 있는 아이템과 새로운 아이템의 equals 를 비교한다.
             override fun areContentsTheSame(oldItem: TaskItem, newItem: TaskItem): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return false
+                // return oldItem == newItem
+
+                /*
+                    1. submitList() 를 통해 변경된 데이터 전달
+                    2. areContentsTheSame 에서 oldItem.title - newItem.title 을 비교
+                    3. 그런데 oldItem 에 새로 넣은 데이터가 들어가있어 UI 수정이 이루어지지 않음 (olditem == newitem) -> true
+
+                    그래서 한 조치 -> 변경이 없어도 그냥 False 로 조치해버림. (성능 저하 가능성 있음.)
+                 */
             }
         }
     }

@@ -20,17 +20,14 @@ import java.text.SimpleDateFormat
 // TODO : Inner class로 호출 시 오류, 원인 알아보기(11/10)
 // TODO : 종료 날짜가 시작 날짜보다 멀어야 함.
 
-class CalendarDialog(sDate : String, type : String) : DialogFragment() {
-    val sDate = sDate
-    val type = type
-
+class CalendarDialog : DialogFragment() {
     private lateinit var dialogBinding: DialogCalendarBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialogBinding = DialogCalendarBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return dialogBinding.root
@@ -48,20 +45,20 @@ class CalendarDialog(sDate : String, type : String) : DialogFragment() {
         // date -> CalendarDay(2021-10-23)
         dialogBinding.dialogDatePicker.setOnDateChangedListener { widget, date, selected ->
             // 0이 붙게 convert 한다.
-            var month =
+            val month =
                 if(date.month + 1 < 10) {
                     "0" + (date.month + 1).toString()
                 } else {
                     (date.month + 1).toString()
                 }
-            var day =
+            val day =
                 if(date.day < 10) {
                     "0" + date.day.toString()
                 } else {
                     date.day.toString()
                 }
 
-            var pickDate =
+            val pickDate =
                 date.year.toString() + "-$month-$day"
             // 데이터베이스에 넣을 값
             /*
@@ -69,7 +66,7 @@ class CalendarDialog(sDate : String, type : String) : DialogFragment() {
                 이유는, toString 으로 하면 Month가 배열로 취급받아서 index 값으로 나오기 때문임.
              */
 
-            var viewDate = "$month-$day"
+            val viewDate = "$month-$day"
             // 뷰에 보여질 값
 
             // FragmentResult

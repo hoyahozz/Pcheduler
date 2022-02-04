@@ -83,7 +83,7 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
         var eTime = ""
         var alarmView = ""
 
-        // FragmentResult ( Fragment <-> Fragment 통신)
+        // FragmentResult ( Fragment <-> Fragment 통신) (Calendar)
         parentFragmentManager.setFragmentResultListener("requestKey", this) { resultKey, bundle ->
             val viewDate = bundle.getString("viewDate")
             pickDate = bundle.getString("pickDate")!!
@@ -96,16 +96,16 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
                 task.end_time = pickDate
             }
 
-            Log.d("result ::", viewDate.toString())
-            Log.d("result ::", pickDate)
+            Log.d(TAG, "FragmentResult (Cal) :: ${viewDate.toString()}")
+            Log.d(TAG, "FragmentResult (Cal) :: $pickDate")
         }
 
-        // FragmentResult ( Fragment <-> Fragment 통신)
+        // FragmentResult ( Fragment <-> Fragment 통신) (Alarm)
         parentFragmentManager.setFragmentResultListener("alarmKey", this) { resultKey, bundle ->
             alarmView = bundle.getString("alarmView")!!
 
             task.alarm = alarmView
-            Log.d("alarm result ::", alarmView)
+            Log.d(TAG, "FragmentResult (Alarm) :: $alarmView")
         }
 
         // 시작 시간, 종료 시간이 널이 아니라면 버튼에 값 넣기
@@ -123,6 +123,7 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
 
         binding.dbsEtContent.setText(task.content)
         binding.dbsEtContent.imeOptions = EditorInfo.IME_ACTION_DONE // EditText 완료 버튼 설정
+
         // 완료 버튼을 눌렀을 때 할 행동 설정
         binding.dbsEtContent.setOnEditorActionListener { textView, actionId, keyEvent ->
 
@@ -132,61 +133,35 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
 
                 listViewModel.updateTask(task)
 
-                var calendar = Calendar.getInstance()
+                val calendar = Calendar.getInstance()
                 val alarmManager =
                     requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val intent = Intent(requireContext(), AlarmReceiver::class.java)
                 intent.putExtra("content", task.content)
                 intent.putExtra("id", task.id)
 
-                // 알람을 설정했을 때만 알람매니저 설정
-
-                if (alarmView != "") {
+                if (alarmView != "") { // 알람을 설정했을 때만 알람매니저 설정
 
                     val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                     val alarmDate = fm.parse(alarmView)
 
                     calendar.time = alarmDate
-
-                    val pendingRequestCode: Int = task.id!!
                     val pendingIntent =
-                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, PendingIntent.FLAG_IMMUTABLE)
+                        PendingIntent.getBroadcast(context, task.id!!, intent, PendingIntent.FLAG_IMMUTABLE)
 
                     alarmManager.set(
                         AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
                     )
-
-//                    alarmManager.setInexactRepeating(
-//                        AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-//                        AlarmManager.INTERVAL_DAY, pendingIntent
-//                    )
-
-                    Toast.makeText(
-                        context,
-                        "Alarm Test :: $pendingRequestCode",
-                        Toast.LENGTH_LONG
-                    ).show()
                 } else { // 알람 설정 안했을 때는 취소
 
-                    val pendingRequestCode: Int = task.id!!
-
-                    // TODO ::  java.lang.IllegalArgumentException: com.dongyang.android.pcheduler:
-                    // Targeting S+ (version 31 and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE be specified when creating a PendingIntent.
                     val pendingIntent =
-                        PendingIntent.getBroadcast(context, pendingRequestCode, intent, PendingIntent.FLAG_IMMUTABLE)
-
+                        PendingIntent.getBroadcast(context, task.id!!, intent, PendingIntent.FLAG_IMMUTABLE)
+                    task.alarm = ""
                     pendingIntent.cancel()
-
-                    Toast.makeText(
-                        context,
-                        "Alarm Test :: $pendingRequestCode, 초기화",
-                        Toast.LENGTH_LONG
-                    ).show()
-
                 }
 
                 Log.d("Update Test :: ", task.start_time + " + " + task.end_time)
-                Log.d("Update Test :: ", "${task.alarm}")
+                Log.d("Update Test :: ", task.alarm)
 
                 dismiss()
             }
@@ -198,14 +173,13 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
         // 시작 버튼을 눌렀을 때 달력 출력되게 설정하였음.
         binding.dbsBtnStartDate.setOnClickListener {
             onButton = "start"
-
-            val sCalendar = CalendarDialog(task.start_time, onButton)
+            val sCalendar = CalendarDialog()
             sCalendar.show(parentFragmentManager, "CalendarView")
         }
 
         binding.dbsBtnEndDate.setOnClickListener {
             onButton = "end"
-            val eCalendar = CalendarDialog(task.start_time, onButton)
+            val eCalendar = CalendarDialog()
             eCalendar.show(manager, "CalendarView")
         }
 

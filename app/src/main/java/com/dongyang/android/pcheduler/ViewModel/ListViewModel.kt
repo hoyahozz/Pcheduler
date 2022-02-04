@@ -81,15 +81,4 @@ class ListViewModel : ViewModel() {
             _currentData.postValue(tmp)
         }
     }
-
-    private val _currentTask = MutableLiveData<TaskEntity>()
-    val currentTask : LiveData<TaskEntity> get() = _currentTask
-
-    fun getTask(id: Int) {
-        Log.d("getTask", "ON")
-        viewModelScope.launch {
-            val tmp = repository.getTask(id)
-            _currentTask.postValue(tmp)
-        }
-    }
 }

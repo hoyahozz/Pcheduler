@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
  * @Description : 알람 설정 다이얼로그
  */
 
-class AlarmDialog(private var task : TaskEntity) : DialogFragment() {
+class AlarmDialog(private val task: TaskEntity) : DialogFragment() {
 
     private lateinit var binding: DialogDateandtimePickerBinding
 
@@ -27,29 +27,33 @@ class AlarmDialog(private var task : TaskEntity) : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = DialogDateandtimePickerBinding.inflate(inflater,container, false)
+    ): View {
+        binding = DialogDateandtimePickerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var pickAlarm : String = ""
-
+        var pickAlarm: String = ""
+        val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        Log.d("Alarm Dialog", "onViewCreated: ${task.alarm}")
 
         // TODO : 현재 시간보다 더 빠른 시간은 설정 못하게 설정하기.
         // Date And Time Picker 설정
         binding.dialogDateTimePicker.apply {
             this.setDisplayMonthNumbers(false)
             this.setDisplayYears(false)
+            if(task.alarm != "") { // 기존 설정한 알람이 있다면 초기값으로 설정
+                val defaultDate = fm.parse(task.alarm)
+                this.setDefaultDate(defaultDate)
+            }
             this.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.gowundodum))
             this.addOnDateChangedListener { displayed, date ->
 
                 // D/Pick Date ::: Fri Nov 19 16:50:00 GMT+09:00 2021
-                val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 pickAlarm = fm.format(date)
-                Log.d("Pick Date :: ", pickAlarm)
+                Log.d("Alarm Dialog", "Alarm Data :: $pickAlarm")
             }
         }
 
@@ -66,7 +70,6 @@ class AlarmDialog(private var task : TaskEntity) : DialogFragment() {
 
         // 초기화 버튼 눌렀을 때
         binding.dialogDateTimePickerInitBtn.setOnClickListener {
-
             pickAlarm = ""
             parentFragmentManager.setFragmentResult(
                 "alarmKey", bundleOf(

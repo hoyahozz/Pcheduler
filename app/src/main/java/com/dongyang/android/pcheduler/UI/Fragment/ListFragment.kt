@@ -3,6 +3,7 @@ package com.dongyang.android.pcheduler.UI.Fragment
 import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,6 +20,10 @@ import com.dongyang.android.pcheduler.ViewModel.ListViewModel
 import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,13 +43,11 @@ class ListFragment : Fragment() {
     // NULL able 이면 매번 ?. ?. 를 붙여야 하기에 NON-NULL 타입으로 쓰기 위해 한번 더 포장한다.
 
     private val listViewModel: ListViewModel by viewModels()
-    private val taskAdapter by lazy {
-        TaskAdapter(listViewModel)
-    }
+
     private val taskListAdapter by lazy {
         TaskListAdapter(listViewModel)
     }
-    var today = ""
+    private var today = ""
 
     /*
          lateinit -> 전역변수 선언 후 null 값을 지정하지 않고 초기화
@@ -82,7 +85,6 @@ class ListFragment : Fragment() {
             }
         }
 */
-
         // TODO :: ItemTouchHelper
         val swipeHelperCallback = SwipeHelperCallback().apply {
             setClamp(150f)
@@ -92,10 +94,9 @@ class ListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.listRcview)
 
 
-
-        // 코틀린에서 apply 변수로 가독성 좋게 표현할 수 있음.
+        // 코틀린에서 apply 변수로 가독성 좋게 표현할  있음.
         binding.listRcview.apply {
-            // this.addItemDecoration(dividerItemDecoration)
+            // this.addItemDecoration(dividerIt수emDecoration)
             this.adapter = taskListAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
             this.addItemDecoration(RecyclerViewDecoration(5))
@@ -107,12 +108,12 @@ class ListFragment : Fragment() {
         }
 
         listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면
-            Log.d("task test", "All task observing")
+            Log.d(TAG, "All task observing")
             listViewModel.fetchTasks(it)
         }
 
         listViewModel.tasks.observe(viewLifecycleOwner) {
-            Log.d("task test", "Tasks Observing")
+            Log.d(TAG, "Tasks Observing ++ ${it[0].task.content}")
             taskListAdapter.submitList(it.toMutableList())
         }
 
@@ -145,5 +146,9 @@ class ListFragment : Fragment() {
         ) {
             outRect.bottom = height
         }
+    }
+
+    companion object {
+        private const val TAG = "ListFragment"
     }
 }

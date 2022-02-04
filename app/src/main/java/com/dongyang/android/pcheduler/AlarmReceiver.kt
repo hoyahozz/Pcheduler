@@ -31,7 +31,6 @@ class AlarmReceiver : BroadcastReceiver() {
     // ID는 별도로 빼놓음
     companion object {
         const val TAG = "AlarmReceiver"
-        const val NOTIFICATION_ID = 100
         const val NOTIFICATION_CHANNEL_ID = "alarm_channel"
         const val NOTIFICATION_CHANNEL_NAME = "My Alarm"
     }
@@ -40,7 +39,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
 
         val content: String = intent?.getStringExtra("content")!!
-        val requestCode = intent.getIntExtra("id", NOTIFICATION_ID) // requestCode = task의 ID
+        val requestCode = intent.getIntExtra("id", 0) // requestCode = task의 ID
 
         // 정해진 시간과 동시에 알람을 제거
         // 작동은 되지만, GlobalScope는 앱이 종료되기 전까지 사라지지 않음.
@@ -52,6 +51,18 @@ class AlarmReceiver : BroadcastReceiver() {
         createNotificationChannel(context)
         notifyNotification(context, content, requestCode)
     }
+
+    // 정해진 시간과 동시에 알람을 제거
+    private suspend fun alarmRemove(id : Int, context: Context) {
+        // DB는 싱글톤이므로 즉각 진입 가능하므로 리시버에서 직접 DB로 진입하여 데이터 수정
+        Log.d(TAG, "alarm: ON")
+        val db = ListDatabase.getInstance(context)!! // NOT NULL
+        val task = db.listDAO().getTask(id)
+        task.alarm = ""
+
+        db.listDAO().updateTask(task)
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotificationChannel(context: Context) {
@@ -72,16 +83,6 @@ class AlarmReceiver : BroadcastReceiver() {
             }
             NotificationManagerCompat.from(context).createNotificationChannel(notificationChannel)
         }
-    }
-
-    // 정해진 시간과 동시에 알람을 제거
-    private suspend fun alarmRemove(id : Int, context: Context) {
-        Log.d(TAG, "alarm: ON")
-        val db = ListDatabase.getInstance(context)!! // NOT NULL
-        val task = db.listDAO().getTask(id)
-        task.alarm = ""
-
-        db.listDAO().updateTask(task)
     }
 
     private fun notifyNotification(context: Context, content: String, requestCode: Int) {
