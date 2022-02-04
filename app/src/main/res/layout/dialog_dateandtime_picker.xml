@@ -14,7 +14,7 @@
         app:picker_curved="true"
         app:picker_cyclic="true"
         app:picker_textSize="18dp"
-        app:picker_visibleItemCount="7" />
+        app:picker_visibleItemCount="6" />
 
     <LinearLayout
         android:layout_width="wrap_content"

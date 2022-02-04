@@ -12,6 +12,7 @@ import com.dongyang.android.pcheduler.Model.TaskEntity
 import com.dongyang.android.pcheduler.R
 import com.dongyang.android.pcheduler.databinding.DialogDateandtimePickerBinding
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * @Author : Jeong Ho Kim
@@ -39,7 +40,7 @@ class AlarmDialog(private val task: TaskEntity) : DialogFragment() {
         val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         Log.d("Alarm Dialog", "onViewCreated: ${task.alarm}")
 
-        // TODO : 현재 시간보다 더 빠른 시간은 설정 못하게 설정하기.
+        // TODO : 현재 시간보다 더 빠른 시간은 설정 못하게 설정하기. :: DONE
         // Date And Time Picker 설정
         binding.dialogDateTimePicker.apply {
             this.setDisplayMonthNumbers(false)
@@ -48,6 +49,8 @@ class AlarmDialog(private val task: TaskEntity) : DialogFragment() {
                 val defaultDate = fm.parse(task.alarm)
                 this.setDefaultDate(defaultDate)
             }
+            this.setIsAmPm(false)
+            this.minDate = Date(System.currentTimeMillis())
             this.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.gowundodum))
             this.addOnDateChangedListener { displayed, date ->
 
