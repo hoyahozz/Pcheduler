@@ -40,7 +40,6 @@ class AlarmDialog(private val task: TaskEntity) : DialogFragment() {
         val fm = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         Log.d("Alarm Dialog", "onViewCreated: ${task.alarm}")
 
-        // TODO : 현재 시간보다 더 빠른 시간은 설정 못하게 설정하기. :: DONE
         // Date And Time Picker 설정
         binding.dialogDateTimePicker.apply {
             this.setDisplayMonthNumbers(false)

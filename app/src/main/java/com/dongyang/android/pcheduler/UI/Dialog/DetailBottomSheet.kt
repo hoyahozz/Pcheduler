@@ -79,7 +79,8 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
 
         db = ListDatabase.getInstance(requireContext())!! // DB
 
-        var sTime = ""
+        var sTime = "" // 뷰에 올릴 값 ("MM-dd")
+        var sDate = "" // 캘린더 다이얼로그로 넘길 날짜값 ("yyyy-MM-dd")
         var eTime = ""
         var alarmView = ""
 
@@ -91,6 +92,7 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
             if (onButton == "start") {
                 binding.dbsBtnStartDate.text = viewDate
                 task.start_time = pickDate
+                sDate = pickDate
             } else {
                 binding.dbsBtnEndDate.text = viewDate
                 task.end_time = pickDate
@@ -173,13 +175,13 @@ class DetailBottomSheet(private val task: TaskEntity, private val listViewModel:
         // 시작 버튼을 눌렀을 때 달력 출력되게 설정하였음.
         binding.dbsBtnStartDate.setOnClickListener {
             onButton = "start"
-            val sCalendar = CalendarDialog()
+            val sCalendar = CalendarDialog(task, sDate, onButton) // 시작 날짜 전달
             sCalendar.show(parentFragmentManager, "CalendarView")
         }
 
         binding.dbsBtnEndDate.setOnClickListener {
             onButton = "end"
-            val eCalendar = CalendarDialog()
+            val eCalendar = CalendarDialog(task, sDate, onButton)
             eCalendar.show(manager, "CalendarView")
         }
 
