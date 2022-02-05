@@ -45,6 +45,8 @@ class CalendarDialog(
 
         val fm = SimpleDateFormat("yyyy-MM-dd")
 
+        Log.d("CalendarDialog", "onViewCreated: $sDate")
+        
         dialogBinding.dialogDatePicker.apply {
             // 시작 날짜가 있으면 시작 날짜보다 늦은 날만 설정할 수 있게
             // 없으면 현재 날짜보다 늦은 날만 설정할 수 있게
@@ -52,18 +54,20 @@ class CalendarDialog(
             // 달력 시작 날짜 설정
             when (type) {
                 "start" -> if (sDate != "") { // 사용자가 설정한 시작 날짜가 없으면
-                    this.setCurrentDate(fm.parse(task.start_time))
-                } else {
                     this.setCurrentDate(fm.parse(sDate))
+                } else {
+                    this.setCurrentDate(fm.parse(task.start_time))
                 }
                 "end" -> if (sDate != "") { // 다이얼로그에서 사용자가 설정한 시작 날짜가 있으면
                     this.state().edit().setMinimumDate(
                         fm.parse(sDate)
                     ).commit()
+                    this.setCurrentDate(fm.parse(sDate))
                 } else { // 다이얼로그에서 사용자가 설정한 시작 날짜가 없으면
                     this.state().edit().setMinimumDate(
                         fm.parse(task.start_time) // 데이터베이스에 있는 값으로 초기값 지정
                     ).commit()
+                    this.setCurrentDate(fm.parse(task.start_time))
                 }
 
             }
