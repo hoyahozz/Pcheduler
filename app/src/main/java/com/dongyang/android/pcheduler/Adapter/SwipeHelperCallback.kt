@@ -20,8 +20,8 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
     private var currentPosition: Int? = null
     private var previousPosition: Int? = null
-    private var currentDx = 0f
-    private var clamp = 0f
+    private var currentDx = 0f // 현재 x값
+    private var clamp = 0f // 고정시킬 크기
 
     // 이동 방향을 결정한다.
     override fun getMovementFlags(
@@ -78,10 +78,12 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         return defaultValue * 10
     }
 
+    // 사용자가 손을 떼면 호출됨
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-        val isClamped = getTag(viewHolder)
+        // val isClamped = getTag(viewHolder)
         // 현재 View 가 고정되어 있지 않고 사용자가 -clamp 이상 스와이프할 시 isClamped를 true로 변경한다.
-        setTag(viewHolder, !isClamped && currentDx <= -clamp)
+        // setTag(viewHolder, !isClamped && currentDx <= -clamp)
+        setTag(viewHolder, currentDx <= -clamp)
         return 2f
     }
 
@@ -99,6 +101,11 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
             val view = getView(viewHolder)
             val isClamped = getTag(viewHolder)
             val x = clampViewPositionHorizontal(view, dX, isClamped, isCurrentlyActive)
+
+            if(x == -clamp) {
+                getView(viewHolder).animate().translationX(-clamp).setDuration(100L).start()
+                return
+            }
 
             currentDx = x
             getDefaultUIUtil().onDraw(
@@ -130,9 +137,11 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
     // 다른 View가 스와이프되거나 터치되면 고정을 해제한다.
     fun removePreviousClamp(recyclerView: RecyclerView) {
-        // Log.d(TAG, "removePreviousClamp: ON")
+        Log.d(TAG, "removePreviousClamp: ON")
+        Log.d(TAG, "removePreviousClamp: current : $currentPosition - previous : $previousPosition")
+
         if (currentPosition == previousPosition) return
-        previousPosition?.let {
+        previousPosition?.let { // 이전 포지션 값이 있으면 레이아웃을 0f 로 조정
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
             getView(viewHolder).translationX = 0f
             setTag(viewHolder, false)

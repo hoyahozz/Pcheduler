@@ -44,7 +44,6 @@ class CalendarDialog(
         super.onViewCreated(view, savedInstanceState)
 
         val fm = SimpleDateFormat("yyyy-MM-dd")
-
         Log.d("CalendarDialog", "onViewCreated: $sDate")
         
         dialogBinding.dialogDatePicker.apply {
@@ -69,10 +68,8 @@ class CalendarDialog(
                     ).commit()
                     this.setCurrentDate(fm.parse(task.start_time))
                 }
-
             }
-
-
+            
             // 날짜를 선택했을 때 나타나는 이벤트 리스너
             // date -> CalendarDay(2021-10-23)
             this.setOnDateChangedListener { widget, date, selected ->

@@ -19,6 +19,7 @@ import com.dongyang.android.pcheduler.Adapter.TaskListAdapter
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
 import com.dongyang.android.pcheduler.Database.ListDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
+import com.dongyang.android.pcheduler.Model.TaskItem
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -94,9 +95,9 @@ class ListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.listRcview)
 
 
-        // 코틀린에서 apply 변수로 가독성 좋게 표현할  있음.
+        // 코틀린에서 apply 변수로 가독성 좋게 표현
         binding.listRcview.apply {
-            // this.addItemDecoration(dividerIt수emDecoration)
+            // this.addItemDecoration(dividerItemDecoration)
             this.adapter = taskListAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
             this.addItemDecoration(RecyclerViewDecoration(10))
@@ -108,13 +109,30 @@ class ListFragment : Fragment() {
         }
 
         listViewModel.readAllTask.observe(viewLifecycleOwner) { // 데이터에 변화가 있으면
-            Log.d(TAG, "All task observing")
             listViewModel.fetchTasks(it)
         }
 
+        var prevListSize : Int = 0
+
         listViewModel.tasks.observe(viewLifecycleOwner) {
-            Log.d(TAG, "Tasks Observing ++ ${it[0].task.content}")
             taskListAdapter.submitList(it.toMutableList())
+
+            /* TODO :: 새로운 데이터를 추가할 때 위로 스크롤이 올라가지 않는 상황 (원인 : UI 스레드가 데이터의 변화를 따라잡지 못하기 때문)
+            * -> 이전 데이터 리스트와 현재 데이터 리스트의 사이즈를 비교해 더 커졌을 경우에 맨 위로 스크롤하게 설정하기 ?
+            * -> 이전 데이터 리스트를 어떻게 구해올 것인지? 성능이 떨어지지 않을지?
+            */
+
+            val currentListSize = it.size
+//            Log.d(TAG, "onViewCreated: prev size : $prevListSize - current size : $currentListSize")
+            if(prevListSize < currentListSize) {
+//                Log.d(TAG, "onViewCreated: 새 데이터 추가")
+                GlobalScope.launch(Dispatchers.Main) { // 실행은 되지만, 글로벌 스코프를 끝내야 함
+                    delay(200)
+                    binding.listRcview.smoothScrollToPosition(0)
+                }
+            }
+
+            prevListSize = it.size
         }
 
         binding.listBtnAdd.setOnClickListener {
