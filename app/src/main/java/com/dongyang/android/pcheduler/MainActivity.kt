@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.dongyang.android.pcheduler.Database.ListDatabase
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         // View Binding -> FindViewById 없이 View에서 바로 사용할 수 있게 해줌.
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root

@@ -9,9 +9,9 @@
         <entry key="app/src/main/res/layout/dialog_dateandtime_picker.xml" value="0.14375" />
         <entry key="app/src/main/res/layout/dialog_detail.xml" value="0.209375" />
         <entry key="app/src/main/res/layout/fragment_cal.xml" value="0.2546875" />
-        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.12916666666666668" />
+        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_date_list.xml" value="0.14375" />
-        <entry key="app/src/main/res/layout/item_list.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/item_list.xml" value="0.335" />
         <entry key="app/src/main/res/layout/item_list_parent.xml" value="0.2546875" />
         <entry key="app/src/main/res/layout/tab_set_date.xml" value="0.209375" />
       </map>

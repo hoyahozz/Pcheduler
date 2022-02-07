@@ -80,7 +80,5 @@ class AlarmDialog(private val task: TaskEntity) : DialogFragment() {
             )
             dismiss()
         }
-
     }
-
 }

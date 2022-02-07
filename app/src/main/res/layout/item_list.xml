@@ -7,20 +7,20 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="5dp"
         android:background="@color/linen"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/item_list_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
             android:fontFamily="@font/maruburi"
             android:text="삭제"
             android:textColor="#FF0000"
@@ -31,27 +31,25 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_list_container"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="3dp"
         android:background="@color/linen"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/item_list_img"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:layout_marginRight="30dp"
             android:background="@color/transparency"
             android:gravity="center_vertical"
-            android:padding="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/item_list"
             app:srcCompat="@drawable/ic_alarm_off" />
 
         <TextView
@@ -63,34 +61,36 @@
             android:text="오늘의 할 일"
             android:textColor="@color/deep_pine"
             android:textSize="15sp"
-            app:layout_constraintLeft_toRightOf="@+id/item_list_img"
-            app:layout_constraintRight_toLeftOf="@+id/item_list_checkBox"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="3dp"
+            app:layout_constraintLeft_toRightOf="@id/item_list_img"
+            app:layout_constraintRight_toLeftOf="@+id/item_list_end_time"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.78" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/item_list_end_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:text="~ 11-09"
+            android:gravity="center_vertical"
             android:textColor="@android:color/darker_gray"
-            android:textSize="12sp"
-            android:visibility="gone"
-            app:layout_constraintLeft_toRightOf="@id/item_list_checkBox"
-            app:layout_constraintRight_toLeftOf="@+id/item_list"
+            android:textSize="11sp"
+            android:visibility="invisible"
+            app:layout_constraintHorizontal_bias="0.989"
+            app:layout_constraintLeft_toRightOf="@id/item_list_img"
+            app:layout_constraintRight_toLeftOf="@+id/item_list_checkBox"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <CheckBox
             android:id="@+id/item_list_checkBox"
             android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
+            android:layout_height="25dp"
             android:buttonTint="@color/delta"
-            app:layout_constraintHorizontal_weight="0"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -100,7 +100,7 @@ class ListFragment : Fragment() {
             // this.addItemDecoration(dividerItemDecoration)
             this.adapter = taskListAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
-            this.addItemDecoration(RecyclerViewDecoration(10))
+            this.addItemDecoration(RecyclerViewDecoration(15))
 
             setOnTouchListener { _, _ ->
                 swipeHelperCallback.removePreviousClamp(this)
