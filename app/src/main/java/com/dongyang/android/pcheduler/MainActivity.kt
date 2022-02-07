@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // 다크모드 비활성화
         // View Binding -> FindViewById 없이 View에서 바로 사용할 수 있게 해줌.
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
