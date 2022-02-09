@@ -1,20 +1,14 @@
 package com.dongyang.android.pcheduler.Adapter
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dongyang.android.pcheduler.Model.TaskItem
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
-import com.dongyang.android.pcheduler.databinding.ItemListBinding
-import com.dongyang.android.pcheduler.databinding.ItemListParentBinding
 
 /**
  * @Author : Jeong Ho Kim
@@ -29,6 +23,7 @@ class TaskListAdapter(
     override fun getItemViewType(position: Int): Int = getItem(position).layoutId
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
+        Log.d(TAG, "onCreateViewHolder: ON")
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             TaskItem.Parent.VIEW_TYPE -> TaskParentHolder(itemView)
@@ -40,6 +35,12 @@ class TaskListAdapter(
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
 //        Log.d(TAG, "onBindViewHolder position: ${getItem(position).task.id}")
         holder.bind(getItem(position))
+    }
+
+    // 화면에서 안보이는 리스트는 스와이프를 초기화
+    override fun onViewDetachedFromWindow(holder: TaskListViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        (holder as RecyclerView.ViewHolder).itemView.animate().translationX(0f).setDuration(100L).start()
     }
 
 //    override fun submitList(list: List<TaskItem>?) {

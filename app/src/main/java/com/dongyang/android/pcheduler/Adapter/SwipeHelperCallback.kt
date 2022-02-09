@@ -4,7 +4,9 @@ import android.graphics.Canvas
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.RecyclerView
+import com.dongyang.android.pcheduler.R
 import kotlin.math.max
 import kotlin.math.min
 
@@ -18,6 +20,7 @@ import kotlin.math.min
 // ItemTouchHelper Callback 클래스 구현
 class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
+    private var prevViewHolder: RecyclerView.ViewHolder? = null
     private var currentPosition: Int? = null
     private var previousPosition: Int? = null
     private var currentDx = 0f // 현재 x값
@@ -52,14 +55,15 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
     // 드래그된 View 가 Drop 되었거나 Swipe 가 Cancel 되거나 Complete 되었을 때 불린다.
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        currentDx = 0f
-        previousPosition = viewHolder.adapterPosition // 몇번째 리스트인지 받아온다.
+        currentDx = 0f // 현재 x 위치 초기화
+        previousPosition = viewHolder.adapterPosition // 드래그, 스와이프 동작이 끝나는 view의 포지션을 받아온다.
         getDefaultUIUtil().clearView(getView(viewHolder))
     }
 
+    // ViewHolder 를 스와이프하거나 드래그 했을 때 호출한다.
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         viewHolder?.let {
-            currentPosition = viewHolder.adapterPosition
+            currentPosition = viewHolder.adapterPosition // 현재 드래그, 스와이프 중인 view의 포지션을 받아온다.
             getDefaultUIUtil().onSelected(getView(it))
         }
         /*
@@ -80,14 +84,15 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
 
     // 사용자가 손을 떼면 호출됨
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-        // val isClamped = getTag(viewHolder)
+         val isClamped = getTag(viewHolder)
+         setTag(viewHolder, !isClamped && currentDx <= -clamp)
         // 현재 View 가 고정되어 있지 않고 사용자가 -clamp 이상 스와이프할 시 isClamped를 true로 변경한다.
-        // setTag(viewHolder, !isClamped && currentDx <= -clamp)
-        setTag(viewHolder, currentDx <= -clamp)
+        // setTag(viewHolder, currentDx <= -clamp)
         return 2f
     }
 
 
+    // 아이템 터치 혹은 스와이프와 같이 뷰에 변화가 생길 경우 호출하는 함수
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,
@@ -97,33 +102,57 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+        if (actionState == ACTION_STATE_SWIPE) {
             val view = getView(viewHolder)
-            val isClamped = getTag(viewHolder)
-            val x = clampViewPositionHorizontal(view, dX, isClamped, isCurrentlyActive)
+            val isClamped = getTag(viewHolder) // 고정 여부 결정 (true -> 고정, false -> 고정 X)
+            val newX = clampViewPositionHorizontal(
+                view,
+                dX,
+                isClamped,
+                isCurrentlyActive
+            ) // x만큼 이동(고정 시 이동 위치, 고정 해g 시 이동 위치 결정)
 
-            if(x == -clamp) {
+            // 고정 시킬 때 애니메이션 추가
+            if (newX == -clamp) {
                 getView(viewHolder).animate().translationX(-clamp).setDuration(100L).start()
                 return
             }
 
-            currentDx = x
+            currentDx = newX
             getDefaultUIUtil().onDraw(
-                c, recyclerView, view, x, dY, actionState, isCurrentlyActive
+                c, recyclerView, view, newX, dY, actionState, isCurrentlyActive
             )
         }
     }
 
+    // Swipe 했을 때 삭제 화면이 보이도록 고정한다.
     private fun clampViewPositionHorizontal(
-        view: View,
+        view : View,
         dX: Float,
         isClamped: Boolean,
         isCurrentlyActive: Boolean
     ): Float {
-        // View 의 가로 길이 절반까지만 스와이프 되도록 설정한다.
+//         View 의 가로 길이 절반까지만 스와이프 되도록 설정한다.
         val min: Float = -view.width.toFloat() / 4
         // RIGHT 방향으로 스와이프를 막는다.
-        val max: Float = 0f
+        val max = 0f
+
+        // 고정할 수 있으면
+//        val newX = if (isClamped) {
+//            // 현재 swipe 중이면 swipe되는 영역 제한
+//            if (isCurrentlyActive)
+//            // 오른쪽 swipe일 때
+//                if (dX < 0) dX / 3 - clamp
+//                // 왼쪽 swipe일 때
+//                else dX - clamp
+//            // swipe 중이 아니면 고정시키기
+//            else -clamp
+//        }
+//        // 고정할 수 없으면 newX는 스와이프한 만큼
+//        else dX
+//
+//        // newX가 0보다 작은지 확인
+//        return min(newX, max)
 
         val x = if (isClamped) {
             // View 고정 시 스와이프 되는 영역을 제한한다.
@@ -135,22 +164,30 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         return min(max(min, x), max)
     }
 
+
+    fun setClamp(clamp: Float) {
+        this.clamp = clamp
+    }
+
     // 다른 View가 스와이프되거나 터치되면 고정을 해제한다.
     fun removePreviousClamp(recyclerView: RecyclerView) {
-        Log.d(TAG, "removePreviousClamp: ON")
-        Log.d(TAG, "removePreviousClamp: current : $currentPosition - previous : $previousPosition")
 
+        // 현재 선택한 view가 이전에 선택한 view와 같으면 넘어감
         if (currentPosition == previousPosition) return
+
+        // 이전에 선택한 위치의 view 고정 해제
         previousPosition?.let { // 이전 포지션 값이 있으면 레이아웃을 0f 로 조정
+            Log.d(TAG, "$previousPosition NOT NULL")
+
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
-            getView(viewHolder).translationX = 0f
+            getView(viewHolder).animate().translationX(0f).setDuration(100L).start()
             setTag(viewHolder, false)
             previousPosition = null
         }
     }
 
     private fun getView(viewHolder: RecyclerView.ViewHolder): View {
-        return (viewHolder as TaskChildHolder).taskContainer
+        return viewHolder.itemView.findViewById(R.id.item_list_container)
     }
 
     // isClamped 를 View의 Tag로 관리한다.
@@ -163,9 +200,6 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
         return viewHolder.itemView.tag as? Boolean ?: false
     }
 
-    fun setClamp(clamp: Float) {
-        this.clamp = clamp
-    }
 
     companion object {
         private const val TAG = "SwipeHelperCallback"

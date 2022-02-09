@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dongyang.android.pcheduler.Adapter.RecyclerViewDecoration
 import com.dongyang.android.pcheduler.Adapter.SwipeHelperCallback
 import com.dongyang.android.pcheduler.Adapter.TaskListAdapter
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
@@ -88,11 +89,10 @@ class ListFragment : Fragment() {
 */
         // TODO :: ItemTouchHelper
         val swipeHelperCallback = SwipeHelperCallback().apply {
-            setClamp(150f)
+            setClamp(resources.displayMetrics.widthPixels.toFloat() / 9) // 1080 / 4 = 120
         }
 
-        val itemTouchHelper = ItemTouchHelper(swipeHelperCallback)
-        itemTouchHelper.attachToRecyclerView(binding.listRcview)
+        ItemTouchHelper(swipeHelperCallback).attachToRecyclerView(binding.listRcview)
 
 
         // 코틀린에서 apply 변수로 가독성 좋게 표현
@@ -112,7 +112,7 @@ class ListFragment : Fragment() {
             listViewModel.fetchTasks(it)
         }
 
-        var prevListSize : Int = 0
+        var prevListSize: Int = 0
 
         listViewModel.tasks.observe(viewLifecycleOwner) {
             taskListAdapter.submitList(it.toMutableList())
@@ -124,7 +124,7 @@ class ListFragment : Fragment() {
 
             val currentListSize = it.size
 //            Log.d(TAG, "onViewCreated: prev size : $prevListSize - current size : $currentListSize")
-            if(prevListSize < currentListSize) {
+            if (prevListSize < currentListSize) {
 //                Log.d(TAG, "onViewCreated: 새 데이터 추가")
                 GlobalScope.launch(Dispatchers.Main) { // 실행은 되지만, 글로벌 스코프를 끝내야 함
                     delay(200)
@@ -152,18 +152,6 @@ class ListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    // 리사이클러뷰 간격 조정
-    inner class RecyclerViewDecoration(private val height: Int) : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(
-            outRect: Rect,
-            view: View,
-            parent: RecyclerView,
-            state: RecyclerView.State
-        ) {
-            outRect.bottom = height
-        }
     }
 
     companion object {
