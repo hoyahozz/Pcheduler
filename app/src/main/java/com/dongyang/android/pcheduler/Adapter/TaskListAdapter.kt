@@ -23,7 +23,6 @@ class TaskListAdapter(
     override fun getItemViewType(position: Int): Int = getItem(position).layoutId
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
-        Log.d(TAG, "onCreateViewHolder: ON")
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             TaskItem.Parent.VIEW_TYPE -> TaskParentHolder(itemView)

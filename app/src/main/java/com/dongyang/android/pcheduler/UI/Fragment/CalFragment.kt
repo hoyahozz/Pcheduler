@@ -11,11 +11,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dongyang.android.pcheduler.Adapter.DateAdapter
+import com.dongyang.android.pcheduler.Adapter.RecyclerViewDecoration
 import com.dongyang.android.pcheduler.Adapter.TaskListAdapter
 import com.dongyang.android.pcheduler.R
+import com.dongyang.android.pcheduler.UI.CalendarDecorator
 import com.dongyang.android.pcheduler.ViewModel.ListViewModel
 import com.dongyang.android.pcheduler.databinding.FragmentCalBinding
 import com.dongyang.android.pcheduler.databinding.FragmentListBinding
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -45,16 +49,28 @@ class CalFragment : Fragment() {
         _binding = FragmentCalBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        var startTimeCalendar = Calendar.getInstance()
-        var endTimeCalendar = Calendar.getInstance()
+        val currentTime: Long = System.currentTimeMillis()
+        val fm = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
+        val today = fm.format(Date(currentTime))
 
-        val currentYear = startTimeCalendar.get(Calendar.YEAR)
-        val currentMonth = startTimeCalendar.get(Calendar.MONTH)
-        val currentDate = startTimeCalendar.get(Calendar.DATE)
 
         binding.dateRcv.apply {
             this.adapter = dateAdapter
+            this.addItemDecoration(RecyclerViewDecoration(15))
             this.layoutManager = LinearLayoutManager(requireContext())
+        }
+
+        binding.calView.apply {
+            // 기본 UI 구성
+            this.selectedDate = CalendarDay.from(Date(currentTime))
+            this.addDecorator(CalendarDecorator.SaturdayDecorator())
+            this.addDecorator(CalendarDecorator.SundayDecorator())
+            val defaultMinimumDay = fm.parse("1920-01-01")
+            val defaultMaximumDay = fm.parse("2100-01-01")
+            this.state().edit().setMaximumDate(defaultMaximumDay).commit()
+            this.state().edit().setMinimumDate(defaultMinimumDay).commit()
+
+            viewModel.readDateData(today)
         }
 
         binding.calView.setOnDateChangedListener { widget, date, selected ->
@@ -87,7 +103,6 @@ class CalFragment : Fragment() {
         }
 
         viewModel.currentData.observe(viewLifecycleOwner) {
-            Log.d(TAG, "currentData Observe: ON")
             dateAdapter.submitList(it)
         }
 

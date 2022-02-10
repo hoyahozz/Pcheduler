@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dongyang.android.pcheduler.Model.TaskEntity
 
@@ -28,6 +29,11 @@ abstract class ListDatabase : RoomDatabase() {
  */
 
     companion object {
+//        private val MIGRATION_6_7 : Migration = object : Migration(6, 7) {
+//            override fun migrate(database: SupportSQLiteDatabase) {
+//
+//            }
+//        }
 
         var INSTANCE: ListDatabase? = null
 
@@ -43,7 +49,8 @@ abstract class ListDatabase : RoomDatabase() {
                                 super.onCreate(db)
                             }
                         })
-                        .fallbackToDestructiveMigration() // 업데이트시 모든 데이터를 드랍한다.
+//                        .fallbackToDestructiveMigration() // 업데이트시 모든 데이터를 드랍한다.
+                        // .addMigrations(MIGRATION_6_7)
                         .build()
                 }
             }

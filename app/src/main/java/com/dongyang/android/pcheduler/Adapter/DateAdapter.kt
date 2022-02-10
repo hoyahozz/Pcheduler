@@ -23,7 +23,6 @@ class DateAdapter(
     private val item = arrayListOf<TaskEntity>()
 
     fun submitList(task : List<TaskEntity>) {
-        Log.d(TAG, "submitList: ON")
         this.item.clear()
         this.item.addAll(task)
         notifyDataSetChanged()
@@ -36,7 +35,6 @@ class DateAdapter(
 
     override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
         val task = item[position]
-        Log.d(TAG, "onBindViewHolder: ${task.content}")
 
         holder.content.text = task.content
 
@@ -74,8 +72,6 @@ class DateAdapter(
         val check = binding.itemListCheckBox
         val time = binding.itemListEndTime
         val img = binding.itemListImg
-
-
     }
 
     // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수
