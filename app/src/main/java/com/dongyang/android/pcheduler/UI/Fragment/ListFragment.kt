@@ -88,7 +88,7 @@ class ListFragment : Fragment() {
         }
 */
         // TODO :: ItemTouchHelper
-        val swipeHelperCallback = SwipeHelperCallback().apply {
+        val swipeHelperCallback = SwipeHelperCallback("list").apply {
             setClamp(resources.displayMetrics.widthPixels.toFloat() / 9) // 1080 / 4 = 120
         }
 

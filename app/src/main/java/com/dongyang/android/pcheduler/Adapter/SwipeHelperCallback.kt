@@ -18,9 +18,10 @@ import kotlin.math.min
  */
 
 // ItemTouchHelper Callback 클래스 구현
-class SwipeHelperCallback : ItemTouchHelper.Callback() {
+class SwipeHelperCallback(
+    private val type : String
+) : ItemTouchHelper.Callback() {
 
-    private var prevViewHolder: RecyclerView.ViewHolder? = null
     private var currentPosition: Int? = null
     private var previousPosition: Int? = null
     private var currentDx = 0f // 현재 x값
@@ -172,12 +173,12 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
     // 다른 View가 스와이프되거나 터치되면 고정을 해제한다.
     fun removePreviousClamp(recyclerView: RecyclerView) {
 
+        Log.d(TAG, "removePreviousClamp: $previousPosition :: $currentPosition")
         // 현재 선택한 view가 이전에 선택한 view와 같으면 넘어감
         if (currentPosition == previousPosition) return
 
         // 이전에 선택한 위치의 view 고정 해제
         previousPosition?.let { // 이전 포지션 값이 있으면 레이아웃을 0f 로 조정
-            Log.d(TAG, "$previousPosition NOT NULL")
 
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
             getView(viewHolder).animate().translationX(0f).setDuration(100L).start()
@@ -187,7 +188,14 @@ class SwipeHelperCallback : ItemTouchHelper.Callback() {
     }
 
     private fun getView(viewHolder: RecyclerView.ViewHolder): View {
-        return viewHolder.itemView.findViewById(R.id.item_list_container)
+
+        Log.d("type Test", "getView: $type")
+        return if(type == "list") {
+            viewHolder.itemView.findViewById(R.id.item_list_container)
+        } else {
+            viewHolder.itemView.findViewById(R.id.item_date_list_container)
+        }
+
     }
 
     // isClamped 를 View의 Tag로 관리한다.

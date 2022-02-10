@@ -34,7 +34,10 @@ class DateAdapter(
     }
 
     override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
+        Log.d(TAG, "onBindViewHolder: ON")
         val task = item[position]
+
+        holder.container.translationX = 0f // 뷰 초기화
 
         holder.content.text = task.content
 
@@ -57,6 +60,10 @@ class DateAdapter(
             holder.time.visibility = View.GONE
         }
 
+        holder.delete.setOnClickListener {
+            viewModel.deleteTask(task)
+        }
+
 
         if (task.alarm != "") {
             holder.img.setImageResource(R.drawable.ic_alarm_on)
@@ -72,6 +79,8 @@ class DateAdapter(
         val check = binding.itemListCheckBox
         val time = binding.itemListEndTime
         val img = binding.itemListImg
+        val delete = binding.itemListDelete
+        val container = binding.itemDateListContainer
     }
 
     // 체크박스의 상태가 변경될 때 데이터베이스에 반영하고, 텍스트에 취소선을 긋는 함수

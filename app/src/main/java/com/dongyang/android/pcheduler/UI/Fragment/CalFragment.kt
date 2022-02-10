@@ -1,5 +1,6 @@
 package com.dongyang.android.pcheduler.UI.Fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,9 +10,11 @@ import android.view.ViewGroup
 import android.widget.ListView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dongyang.android.pcheduler.Adapter.DateAdapter
 import com.dongyang.android.pcheduler.Adapter.RecyclerViewDecoration
+import com.dongyang.android.pcheduler.Adapter.SwipeHelperCallback
 import com.dongyang.android.pcheduler.Adapter.TaskListAdapter
 import com.dongyang.android.pcheduler.R
 import com.dongyang.android.pcheduler.UI.CalendarDecorator
@@ -41,6 +44,7 @@ class CalFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,12 +56,25 @@ class CalFragment : Fragment() {
         val currentTime: Long = System.currentTimeMillis()
         val fm = SimpleDateFormat("yyyy-MM-dd", Locale("ko", "KR"))
         val today = fm.format(Date(currentTime))
+        var pickDate = today
+
+        // TODO :: ItemTouchHelper
+        val swipeHelperCallback = SwipeHelperCallback("cal").apply {
+            setClamp(resources.displayMetrics.widthPixels.toFloat() / 9) // 1080 / 4 = 120
+        }
+
+        ItemTouchHelper(swipeHelperCallback).attachToRecyclerView(binding.dateRcv)
 
 
         binding.dateRcv.apply {
             this.adapter = dateAdapter
             this.addItemDecoration(RecyclerViewDecoration(15))
             this.layoutManager = LinearLayoutManager(requireContext())
+
+            setOnTouchListener { _, _ ->
+                swipeHelperCallback.removePreviousClamp(this)
+                false
+            }
         }
 
         binding.calView.apply {
@@ -72,6 +89,7 @@ class CalFragment : Fragment() {
 
             viewModel.readDateData(today)
         }
+
 
         binding.calView.setOnDateChangedListener { widget, date, selected ->
             // 0이 붙게 convert 한다.
@@ -88,7 +106,7 @@ class CalFragment : Fragment() {
                     date.day.toString()
                 }
 
-            val pickDate =
+            pickDate =
                 date.year.toString() + "-$month-$day"
             // 데이터베이스에 넣을 값
 
@@ -99,6 +117,10 @@ class CalFragment : Fragment() {
 
             Log.d(TAG, "onCreateView: $pickDate")
 
+            viewModel.readDateData(pickDate)
+        }
+
+        viewModel.readAllTask.observe(viewLifecycleOwner) {
             viewModel.readDateData(pickDate)
         }
 

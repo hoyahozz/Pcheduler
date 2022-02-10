@@ -39,7 +39,7 @@ class TaskListAdapter(
     // 화면에서 안보이는 리스트는 스와이프를 초기화
     override fun onViewDetachedFromWindow(holder: TaskListViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        (holder as RecyclerView.ViewHolder).itemView.animate().translationX(0f).setDuration(100L).start()
+//        (holder as RecyclerView.ViewHolder).itemView.animate().translationX(0f).setDuration(100L).start()
     }
 
 //    override fun submitList(list: List<TaskItem>?) {

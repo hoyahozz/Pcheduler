@@ -30,7 +30,7 @@ class TaskChildHolder(
 ) : TaskListAdapter.TaskListViewHolder(itemView) {
     private val binding by lazy { ItemListBinding.bind(itemView) }
 
-    val taskContainer by lazy {
+    private val taskContainer by lazy {
         binding.itemListContainer
     }
 
@@ -44,6 +44,8 @@ class TaskChildHolder(
             val taskDelete = this.itemListDelete
             val taskCheck = this.itemListCheckBox
             val taskEndTime = this.itemListEndTime
+
+            taskContainer.translationX = 0f
 
             taskText.text = task.content
 
